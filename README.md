@@ -2,6 +2,8 @@
 
 [Creating a Blog with Hugo and Github in 10 minutes](https://www.youtube.com/watch?v=LIFvgrRxdt4)
 
+[marzelwidmer.github.io](https://marzelwidmer.github.io)
+
 ```bash
 git clone git@github.com:marzelwidmer/resume.git
 ```
@@ -49,6 +51,7 @@ hugo new posts/myposts.md
 vi content/posts/myposts.md
 ```
 
+```md
 +++
 title = 'Myposts'
 date = 2024-02-17T12:42:12+01:00
@@ -57,11 +60,7 @@ date = 2024-02-17T12:42:12+01:00
 
 +++
 
-```kotlin
-fun foo() : String {
-    val bar = "Foo Bar"
-    return bar
-}
+Test content.
 ```
 
 ```bash
