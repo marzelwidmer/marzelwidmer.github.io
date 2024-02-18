@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script type="application/javascript" src='https://marzelwidmer.github.io/js/theme-mode.js'></script>
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/frameworks.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github-style.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/light.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/dark.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/syntax.css' />
+    <title>Apache Camel with Kotlin and Spring Boot - Marcel Widmer</title>
+    
+    <link rel="icon" type="image/x-icon" href='https://marzelwidmer.github.io/images/favicon.ico'>
+    
+    <meta name="theme-color" content="#1e2327">
+
+    
+    <meta name="description"
+  content="Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data.
+Precondition on OSX Create Project Check Camel Context File Route FTP Route Choice Route Precondition on OSX We will also use command line ftp commands for this you need the ftp command line tool this can be installed with :
+brew install inetutils Create Project Run the following commands :" />
+<meta name="keywords"
+  content='google analytics' />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://marzelwidmer.github.io/post/blog/2020/2020-05-04-camel-kotlin-spring-boot/" />
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Apache Camel with Kotlin and Spring Boot - Marcel Widmer" />
+<meta name="twitter:description"
+  content="Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data.
+Precondition on OSX Create Project Check Camel Context File Route FTP Route Choice Route Precondition on OSX We will also use command line ftp commands for this you need the ftp command line tool this can be installed with :
+brew install inetutils Create Project Run the following commands :" />
+<meta name="twitter:site" content="https://marzelwidmer.github.io/" />
+<meta name="twitter:creator" content="" />
+<meta name="twitter:image"
+  content="https://marzelwidmer.github.io/">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Apache Camel with Kotlin and Spring Boot - Marcel Widmer">
+<meta property="og:description"
+  content="Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data.
+Precondition on OSX Create Project Check Camel Context File Route FTP Route Choice Route Precondition on OSX We will also use command line ftp commands for this you need the ftp command line tool this can be installed with :
+brew install inetutils Create Project Run the following commands :" />
+<meta property="og:url" content="https://marzelwidmer.github.io/post/blog/2020/2020-05-04-camel-kotlin-spring-boot/" />
+<meta property="og:site_name" content="Apache Camel with Kotlin and Spring Boot" />
+<meta property="og:image"
+  content="https://marzelwidmer.github.io/">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+<meta property="article:published_time" content="2020-05-04 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body>
+  <div style="position: relative">
+  <header class="Header js-details-container Details px-3 px-md-4 px-lg-5 flex-wrap flex-md-nowrap open Details--on">
+    <div class="Header-item mobile-none" style="margin-top: -4px; margin-bottom: -4px;">
+      <a class="Header-link" href="https://marzelwidmer.github.io/">
+        <img class="octicon" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item d-md-none">
+      <button class="Header-link btn-link js-details-target" type="button"
+        onclick="document.querySelector('#header-search').style.display = document.querySelector('#header-search').style.display == 'none'? 'block': 'none'">
+        <img height="24" class="octicon octicon-three-bars" width="24" src="/images/GitHub-Mark-Light-32px.png">
+      </button>
+    </div>
+    <div style="display: none;" id="header-search"
+      class="Header-item Header-item--full flex-column flex-md-row width-full flex-order-2 flex-md-order-none mr-0 mr-md-3 mt-3 mt-md-0 Details-content--hidden-not-important d-md-flex">
+      <div
+        class="Header-search header-search flex-auto js-site-search position-relative flex-self-stretch flex-md-self-auto mb-3 mb-md-0 mr-0 mr-md-3 scoped-search site-scoped-search js-jump-to">
+        <div class="position-relative">
+          <form target="_blank" action="https://www.google.com/search" accept-charset="UTF-8" method="get"
+            autocomplete="off">
+            <label
+              class="Header-search-label form-control input-sm header-search-wrapper p-0 js-chromeless-input-container header-search-wrapper-jump-to position-relative d-flex flex-justify-between flex-items-center">
+              <input type="text"
+                class="Header-search-input form-control input-sm header-search-input jump-to-field js-jump-to-field js-site-search-focus js-site-search-field is-clearable"
+                name="q" value="" placeholder="Search" autocomplete="off">
+              <input type="hidden" name="q" value="site:https://marzelwidmer.github.io/">
+            </label>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="Header-item Header-item--full flex-justify-center d-md-none position-relative">
+      <a class="Header-link " href="https://marzelwidmer.github.io/">
+        <img class="octicon octicon-mark-github v-align-middle" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item" style="margin-right: 0;">
+      <a href="javascript:void(0)" class="Header-link no-select" onclick="switchTheme()">
+        <svg style="fill: var(--color-profile-color-modes-toggle-moon);" class="no-select" viewBox="0 0 16 16"
+          version="1.1" width="16" height="16">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M4.52208 7.71754C7.5782 7.71754 10.0557 5.24006 10.0557 2.18394C10.0557 1.93498 10.0392 1.68986 10.0074 1.44961C9.95801 1.07727 10.3495 0.771159 10.6474 0.99992C12.1153 2.12716 13.0615 3.89999 13.0615 5.89383C13.0615 9.29958 10.3006 12.0605 6.89485 12.0605C3.95334 12.0605 1.49286 10.001 0.876728 7.24527C0.794841 6.87902 1.23668 6.65289 1.55321 6.85451C2.41106 7.40095 3.4296 7.71754 4.52208 7.71754Z">
+          </path>
+        </svg>
+      </a>
+    </div>
+  </header>
+</div>
+
+  
+<div>
+  <main>
+    <div class="gisthead pagehead bg-gray-light pb-0 pt-3 mb-4">
+      <div class="px-0">
+        <div class="mb-3 d-flex px-3 px-md-3 px-lg-5">
+          <div class="flex-auto min-width-0 width-fit mr-3">
+            <div class="d-flex">
+              <div class="d-none d-md-block">
+                <a class="avatar mr-2 flex-shrink-0" href="https://marzelwidmer.github.io/">
+                  <img class=" avatar-user"
+                    src="/images/avatar.png"
+                    width="32" height="32"></a>
+              </div>
+              <div class="d-flex flex-column">
+                <h1 class="break-word f3 text-normal mb-md-0 mb-1">
+                  <span class="author">
+                    <a href="https://marzelwidmer.github.io/">Marcel Widmer</a></span><span
+                    class="path-divider">/</span><strong class="css-truncate-target mr-1" style="max-width: 410px"><a
+                      href="https://marzelwidmer.github.io/post/blog/2020/2020-05-04-camel-kotlin-spring-boot/">Apache Camel with Kotlin and Spring Boot</a></strong>
+                </h1>
+                <div class="note m-0">
+                  Created <relative-time datetime="Mon, 04 May 2020 00:00:00 &#43;0000"
+                    class="no-wrap">
+                    Mon, 04 May 2020 00:00:00 &#43;0000</relative-time>
+
+                  
+                  <span class="file-info-divider"></span>
+                  Modified <relative-time datetime="Fri, 16 Feb 2024 08:20:05 &#43;0100"
+                    class="no-wrap">
+                    Fri, 16 Feb 2024 08:20:05 &#43;0100</relative-time>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-lg px-3 new-discussion-timeline">
+      <div class="repository-content gist-content">
+        <div>
+          <div class="js-gist-file-update-container js-task-list-container file-box">
+            <div id="file-pytest" class="file my-2">
+              <div id="post-header" class="file-header d-flex flex-md-items-center flex-items-start sticky-header" style="z-index: 2">
+                <div class="file-info d-flex flex-md-items-center flex-items-start flex-order-1 flex-auto">
+                  <div class="text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1 mt-2 mt-md-0">
+                    
+                    <summary id="toc-toggle" onclick="clickToc()" class="btn btn-octicon m-0 mr-2 p-2">
+                      <svg aria-hidden="true" viewBox="0 0 16 16" height="16" width="16" class="octicon octicon-list-unordered">
+                        <path fill-rule="evenodd" d="M2 4a1 1 0 100-2 1 1 0 000 2zm3.75-1.5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zM3 8a1 1 0 11-2 0 1 1 0 012 0zm-1 6a1 1 0 100-2 1 1 0 000 2z"></path>
+                      </svg>
+                    </summary>
+                    <details-menu class="SelectMenu" id="toc-details" style="display: none;">
+                      <div class="SelectMenu-modal rounded-3 mt-1" style="max-height: 340px;">
+                        <div class="SelectMenu-list SelectMenu-list--borderless p-2" style="overscroll-behavior: contain;" id="toc-list">
+                        </div>
+                      </div>
+                    </details-menu>
+                      1115 Words
+                    
+
+                  </div>
+                  <div class="file-actions flex-order-2 pt-0">
+                    
+                    
+                    <a class="muted-link mr-3" href="/tags/spring-boot">
+                      <svg class="octicon octicon-tag" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                        <path fill-rule="evenodd"
+                          d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z">
+                        </path>
+                      </svg>
+                      Spring Boot
+                    </a>
+                    
+                    
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="Box-body px-5 pb-5" style="z-index: 1">
+                <article class="markdown-body entry-content container-lg"><p>Apache Camel is an open source integration framework that empowers you to quickly and easily integrate various systems consuming or producing data.</p>
+<ul>
+<li><a href="#precondition">Precondition on OSX</a></li>
+<li><a href="#createProject">Create Project</a></li>
+<li><a href="#checkCamelContext">Check Camel Context</a></li>
+<li><a href="#fileRoute">File Route</a></li>
+<li><a href="#ftpRoute">FTP Route</a></li>
+<li><a href="#choiceRoute">Choice Route</a></li>
+</ul>
+<h3 id="precondition">Precondition on OSX</h3>
+<p>We will also use command line <code>ftp</code> commands for this you need the <code>ftp</code>
+command line tool this can be installed with :</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">brew install inetutils
+</span></span></code></pre></div><h2 id="createProject">Create Project</h2>
+<p>Run the following commands :</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KBOOT_NAME</span><span class="o">=</span>kboot-camel
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KBOOT_APPL_NAME</span><span class="o">=</span>KbootCamel
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http https://start.spring.io/starter.tgz <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">dependencies</span><span class="o">==</span>camel,actuator,webflux <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">description</span><span class="o">==</span><span class="s2">&#34;Demo project Spring Boot&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">applicationName</span><span class="o">==</span><span class="nv">$KBOOT_APPL_NAME</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">name</span><span class="o">==</span><span class="nv">$KBOOT_NAME</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">groupId</span><span class="o">==</span>ch.keepcalm <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">artifactId</span><span class="o">==</span><span class="nv">$KBOOT_NAME</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">packageName</span><span class="o">==</span>ch.keepcalm.demo <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">javaVersion</span><span class="o">==</span><span class="m">11</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">language</span><span class="o">==</span>kotlin <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="nv">baseDir</span><span class="o">==</span><span class="nv">$KBOOT_NAME</span><span class="p">|</span> tar -xzvf -
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> <span class="nv">$KBOOT_NAME</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">http https://raw.githubusercontent.com/marzelwidmer/marzelwidmer.github.io/master/img/banner.txt <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    &gt; src/main/resources/banner.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rm src/main/resources/application.properties
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;spring:
+</span></span></span><span class="line"><span class="cl"><span class="s2">  application:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    name: </span><span class="nv">$KBOOT_NAME</span><span class="s2">&#34;</span> <span class="p">|</span> &gt; src/main/resources/application.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">idea .
+</span></span></code></pre></div><h3 id="change-maven-dependencies">Change Maven Dependencies</h3>
+<p>When working with <code>Camel</code> best practice is to change the generated Maven <code>pom.xml</code> from the <code>start.spring.io</code>
+Like in the official description of <code>Apache Camel</code> <a href="https://camel.apache.org/camel-spring-boot/latest/">camel-spring-boot</a>
+So lets refactor our <code>pom.xml</code></p>
+<p>We take the version from the <code>camel-spring-boot-starter</code> move it up to the <code>properties</code> section with the property name <code>camel.version</code>.
+Add the <code>Camel</code> <code>BOM</code> <code>dependencieManagement</code> section to it.</p>
+<h4 id="properties-section">Properties Section</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;properties&gt;</span>`
+</span></span><span class="line"><span class="cl">		<span class="nt">&lt;camel.version&gt;</span>3.2.0<span class="nt">&lt;/camel.version&gt;</span>
+</span></span><span class="line"><span class="cl">        ...
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/properties&gt;</span>
+</span></span></code></pre></div><h4 id="dependency-section">Dependency Section</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="c">&lt;!-- Camel --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.camel.springboot<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>camel-spring-boot-starter<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><h4 id="dependency-management-section">Dependency Management Section</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencyManagement&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="c">&lt;!-- Camel BOM --&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;groupId&gt;</span>org.apache.camel.springboot<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;artifactId&gt;</span>camel-spring-boot-dependencies<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;version&gt;</span>${camel.version}<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/dependencies&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencyManagement&gt;</span>
+</span></span></code></pre></div><h2 id="checkCamelContext">Check CamelContext</h2>
+<p>Let&rsquo;s check if <code>Camel</code> is loading in out Spring Boot application for this let`s start the application</p>
+<p>Run the following command :</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mvn spring-boot:run
+</span></span></code></pre></div><p>Verify the console output you should see something like <code>AbstractCamelContext - Apache Camel 3.2.0 (CamelContext: camel-1) is starting</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">   _    ____              _
+</span></span><span class="line"><span class="cl">   <span class="p">|</span> <span class="p">|</span> __ __ <span class="o">)</span>  ___   ___ <span class="p">|</span> <span class="p">|</span>_
+</span></span><span class="line"><span class="cl">   <span class="p">|</span> <span class="p">|</span>/ /  _ <span class="se">\ </span>/ _ <span class="se">\ </span>/ _ <span class="se">\|</span> __<span class="p">|</span>
+</span></span><span class="line"><span class="cl">   <span class="p">|</span>   &lt;<span class="p">|</span> <span class="p">|</span>_<span class="o">)</span> <span class="p">|</span> <span class="o">(</span>_<span class="o">)</span> <span class="p">|</span> <span class="o">(</span>_<span class="o">)</span> <span class="p">|</span> <span class="p">|</span>_
+</span></span><span class="line"><span class="cl">   <span class="p">|</span>_<span class="p">|</span><span class="se">\_\_</span>___/ <span class="se">\_</span>__/ <span class="se">\_</span>__/ <span class="se">\_</span>_<span class="p">|</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">:: kboot-camel: :: Running Spring Boot: <span class="o">(</span>v2.3.0.RC1<span class="o">)</span> :: Active Profiles: default ::
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:57.489 KbootCamelKt                             - Starting KbootCamelKt on MacBookPro with PID <span class="m">20731</span> <span class="o">(</span>/Users/morpheus/dev/kboot-camel/target/classes started by morpheus in /Users/morpheus/dev/kboot-camel<span class="o">)</span>
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:57.493 KbootCamelKt                             - No active profile set, falling back to default profiles: default
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.261 trationDelegate<span class="nv">$BeanPostProcessorChecker</span> - Bean <span class="s1">&#39;org.apache.camel.spring.boot.CamelAutoConfiguration&#39;</span> of <span class="nb">type</span> <span class="o">[</span>org.apache.camel.spring.boot.CamelAutoConfiguration<span class="o">]</span> is not eligible <span class="k">for</span> getting processed by all BeanPostProcessors <span class="o">(</span><span class="k">for</span> example: not eligible <span class="k">for</span> auto-proxying<span class="o">)</span>
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.548 LRUCacheFactory                          - Detected and using LURCacheFactory: camel-caffeine-lrucache
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.739 EndpointLinksResolver                    - Exposing <span class="m">2</span> endpoint<span class="o">(</span>s<span class="o">)</span> beneath base path <span class="s1">&#39;/actuator&#39;</span>
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.971 SpringBootRoutesCollector                - Loading additional Camel XML routes from: classpath:camel/*.xml
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.971 SpringBootRoutesCollector                - Loading additional Camel XML rests from: classpath:camel-rest/*.xml
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.985 DefaultManagementStrategy                - JMX is enabled
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.987 AbstractCamelContext                     - Apache Camel 3.2.0 <span class="o">(</span>CamelContext: camel-1<span class="o">)</span> is starting
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.989 AbstractCamelContext                     - StreamCaching is not in use. If using streams <span class="k">then</span> its recommended to <span class="nb">enable</span> stream caching. See more details at http://camel.apache.org/stream-caching.html
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.989 AbstractCamelContext                     - Total <span class="m">0</span> routes, of which <span class="m">0</span> are started
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:58.989 AbstractCamelContext                     - Apache Camel 3.2.0 <span class="o">(</span>CamelContext: camel-1<span class="o">)</span> started in 0.002 seconds
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:59.139 NettyWebServer                           - Netty started on port<span class="o">(</span>s<span class="o">)</span>: <span class="m">8080</span>
+</span></span><span class="line"><span class="cl">2020-05-05 Tue 07:50:59.142 KbootCamelKt                             - Started KbootCamelKt in 1.965 seconds <span class="o">(</span>JVM running <span class="k">for</span> 2.195<span class="o">)</span>
+</span></span></code></pre></div><h2 id="fileRoute">File Route</h2>
+<h3 id="file-builder-route">File Builder Route</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="nd">@Component</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">FileRouteBuilder</span> <span class="p">:</span> <span class="n">RouteBuilder</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">workDir</span> <span class="p">=</span><span class="nc">System</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&#34;PWD&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">input</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="si">$workDir</span><span class="s2">/orders/in?include=order.xml&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">output</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="si">$workDir</span><span class="s2">/orders/out?fileExist=Fail&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Throws</span><span class="p">(</span><span class="n">Exception</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">configure</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">from</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$input</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">HeaderProcessor</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$output</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&#34;Camel body: </span><span class="se">\$</span><span class="s2">{body.class} </span><span class="se">\$</span><span class="s2">{body}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>To test the <code>FileBuilderRoute</code> you can copy the test <code>XML</code> files from my sample application on <a href="https://github.com/marzelwidmer/kboot-camel">GitHub</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── files
+</span></span><span class="line"><span class="cl">│   ├── order-2.xml
+</span></span><span class="line"><span class="cl">│   └── order.xml
+</span></span></code></pre></div><p>in the folder <code>orders/in</code> after application start. The proceeded files will be then in the hidden folder <code>.camel</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">orders
+</span></span><span class="line"><span class="cl">├── in
+</span></span><span class="line"><span class="cl">│   └── .camel
+</span></span><span class="line"><span class="cl">│       ├── order-2.xml
+</span></span><span class="line"><span class="cl">│       └── order.xml
+</span></span><span class="line"><span class="cl">└── out
+</span></span><span class="line"><span class="cl">    ├── 2019-01-28-order-2.xml
+</span></span><span class="line"><span class="cl">    └── order.xml
+</span></span></code></pre></div><h3 id="processor">Processor</h3>
+<p>Creat a <code>HeaderProcessor</code> that implement the function <code>process</code> from the interface <code>org.apache.camel.Processor</code>.
+there we parse the date with <code>XPath</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">HeaderProcessor</span> <span class="p">:</span> <span class="n">Processor</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">final</span> <span class="k">val</span> <span class="py">XPATH</span><span class="n">_DATE</span> <span class="p">=</span> <span class="s2">&#34;/order/orderDate/text()&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">process</span><span class="p">(</span><span class="n">exchange</span><span class="p">:</span> <span class="n">Exchange</span><span class="p">?)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">oderXml</span> <span class="p">=</span> <span class="n">exchange</span><span class="o">?.</span><span class="n">`in`</span><span class="o">?.</span><span class="n">body</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">orderDateTime</span> <span class="p">=</span> <span class="nc">XPathBuilder</span><span class="p">.</span><span class="n">xpath</span><span class="p">(</span><span class="n">XPATH_DATE</span><span class="p">).</span><span class="n">evaluate</span><span class="p">(</span><span class="n">exchange</span><span class="o">?.</span><span class="n">context</span><span class="p">,</span> <span class="n">oderXml</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">formattedOrderDate</span> <span class="p">=</span> <span class="n">getFormattedData</span><span class="p">(</span><span class="n">orderDateTime</span> <span class="p">=</span> <span class="n">orderDateTime</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exchange</span><span class="o">?.</span><span class="n">`in`</span><span class="o">?.</span><span class="n">setHeader</span><span class="p">(</span><span class="s2">&#34;orderDate&#34;</span><span class="p">,</span> <span class="n">formattedOrderDate</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="n">exchange</span><span class="o">?.</span><span class="n">`in`</span><span class="o">?.</span><span class="n">setHeader</span><span class="p">(</span><span class="s2">&#34;uuid&#34;</span><span class="p">,</span> <span class="nc">UUID</span><span class="p">.</span><span class="n">randomUUID</span><span class="p">().</span><span class="n">toString</span><span class="p">().</span><span class="n">take</span><span class="p">(</span><span class="m">4</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// TODO: 05.05.20 DirtyHarry Implementation
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">private</span> <span class="k">fun</span> <span class="nf">getFormattedData</span><span class="p">(</span><span class="n">orderDateTime</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">=</span> <span class="nc">DateTimeFormatter</span><span class="p">.</span><span class="n">ofPattern</span><span class="p">(</span><span class="s2">&#34;yyyy-MM-dd&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">format</span><span class="p">(</span><span class="nc">LocalDateTime</span><span class="p">.</span><span class="n">ofInstant</span><span class="p">(</span><span class="nc">Instant</span><span class="p">.</span><span class="n">parse</span><span class="p">(</span><span class="n">orderDateTime</span><span class="p">),</span> <span class="nc">ZoneOffset</span><span class="p">.</span><span class="n">UTC</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Add <code>HeaderProcessor</code> class to our <code>FileRouteBuilder</code> with <code>.process(HeaderProcessor())</code>
+We also change the filename in the <code>to</code> section with <code>.to(&quot;file:$workDir/orders/out?fileName=\${header.orderDate}-\${header.CamelFileName}&quot;)</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="nd">@Component</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">FileRouteBuilder</span> <span class="p">:</span> <span class="n">RouteBuilder</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">workDir</span> <span class="p">=</span><span class="nc">System</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&#34;PWD&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">input</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="si">$workDir</span><span class="s2">/orders/in?include=order.xml&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">output</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="si">$workDir</span><span class="s2">/orders/out?fileExist=Fail&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Throws</span><span class="p">(</span><span class="n">Exception</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">configure</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">from</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$input</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$output</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&#34;Camel body: </span><span class="se">\$</span><span class="s2">{body.class} </span><span class="se">\$</span><span class="s2">{body}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">from</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$workDir</span><span class="s2">/orders/in?include=order-.*xml&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">HeaderProcessor</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$workDir</span><span class="s2">/orders/out?fileName=</span><span class="se">\$</span><span class="s2">{header.orderDate}-</span><span class="se">\$</span><span class="s2">{header.uuid}-</span><span class="se">\$</span><span class="s2">{header.CamelFileName}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&#34;Camel body: </span><span class="se">\$</span><span class="s2">{body.class} </span><span class="se">\$</span><span class="s2">{body}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="ftpRoute">FTP Route</h2>
+<h3 id="ftp-route-builder">FTP Route Builder</h3>
+<p>Let&rsquo;s update our <code>pom</code> file with the <code>camel-ftp</code> dependency.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="c">&lt;!-- camel-ftp  --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.apache.camel<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>camel-ftp<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="nd">@Component</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">FtpRouteBuilder</span> <span class="p">:</span> <span class="n">RouteBuilder</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">ftpEndpoint</span> <span class="p">=</span><span class="s2">&#34;ftp.walkerit.ch&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">username</span> <span class="p">=</span><span class="s2">&#34;public&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">password</span> <span class="p">=</span><span class="s2">&#34;Public8852&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">workDir</span> <span class="p">=</span><span class="nc">System</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&#34;PWD&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">output</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="si">$workDir</span><span class="s2">/orders/out?fileExist=Fail&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Throws</span><span class="p">(</span><span class="n">Exception</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">configure</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">         <span class="n">from</span><span class="p">(</span><span class="s2">&#34;ftp://</span><span class="si">$ftpEndpoint</span><span class="s2">?username=</span><span class="si">$username</span><span class="s2">&amp;password=</span><span class="si">$password</span><span class="s2">&amp;delete=true&amp;include=order.*xml&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">             <span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&#34;New File </span><span class="se">\$</span><span class="s2">{header.CamleFileName} picked up from </span><span class="se">\$</span><span class="s2">{header.CamleFileHost}&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">             <span class="p">.</span><span class="n">process</span><span class="p">(</span><span class="n">ExchangePrinter</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">             <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;file://</span><span class="si">$output</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="processor-1">Processor</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ExchangePrinter</span> <span class="p">:</span> <span class="n">Processor</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">log</span> <span class="p">=</span> <span class="nc">LoggerFactory</span><span class="p">.</span><span class="n">getLogger</span><span class="p">(</span><span class="n">javaClass</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Throws</span><span class="p">(</span><span class="n">Exception</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">process</span><span class="p">(</span><span class="n">exchange</span><span class="p">:</span> <span class="n">Exchange</span><span class="p">?)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="py">body</span> <span class="p">=</span> <span class="n">exchange</span><span class="o">?.</span><span class="n">`in`</span><span class="o">?.</span><span class="n">body</span>
+</span></span><span class="line"><span class="cl">        <span class="n">log</span><span class="p">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&#34;Body: </span><span class="si">$body</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="ftp-server">FTP Server</h2>
+<p>Upload test <code>xml</code> file to public <code>FTP</code> server <a href="https://www.walkerit.ch/public-ftp">https://www.walkerit.ch/public-ftp</a>
+with the script <code>ftp-upload.sh</code>.</p>
+<p>Run the following command :</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./ftp-upload.sh
+</span></span></code></pre></div><h2 id="start-application">Start Application</h2>
+<p>When you start the Application <code>mvn spring-boot:run</code> check the console output for <code>New File  picked up from</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">2020-05-06 Wed 07:32:39.101 KbootCamelKt    - Started KbootCamelKt in 2.055 seconds <span class="o">(</span>JVM running <span class="k">for</span> 2.265<span class="o">)</span>
+</span></span><span class="line"><span class="cl">2020-05-06 Wed 07:32:40.099 route3          - New File  picked up from
+</span></span><span class="line"><span class="cl">2020-05-06 Wed 07:32:40.099 ExchangePrinter - Body: RemoteFile<span class="o">[</span>order-ftp.xml<span class="o">]</span>
+</span></span></code></pre></div><p>and the files will be downloaded in the <code>out</code> folder.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── in
+</span></span><span class="line"><span class="cl">└── out
+</span></span><span class="line"><span class="cl">    └── order-ftp.xml
+</span></span></code></pre></div><h2 id="choiceRoute">Choice Route </h2>
+<h3 id="choice-route-builder">Choice Route Builder</h3>
+<p>Lets creat a choice route aka <code>switch</code>.</p>
+<p>This route will put the files in a folder of the publisher name. We will do this with <code>xPATH</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">private</span> <span class="k">final</span> <span class="k">val</span> <span class="py">XPATH</span><span class="n">_SEARCH_ORLY</span> <span class="p">=</span> <span class="s2">&#34;order/orderItems/orderItem/orderItemPublisherName/text() = &#39;ORly&#39;&#34;</span>
+</span></span></code></pre></div><p>This will parse the xml file and deliver the files in the correct folder. For this you can put the sample files from the <code>files</code> folder in the <code>in/publisher/</code> folder.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── in
+</span></span><span class="line"><span class="cl">│   └── publisher
+</span></span><span class="line"><span class="cl">│       ├── pub-foo.xml
+</span></span><span class="line"><span class="cl">│       ├── pub-orly.xml
+</span></span><span class="line"><span class="cl">│       └── pub-packt.xml
+</span></span><span class="line"><span class="cl">└── out
+</span></span><span class="line"><span class="cl">    └── publisher
+</span></span><span class="line"><span class="cl">        ├── orly
+</span></span><span class="line"><span class="cl">        ├── others
+</span></span><span class="line"><span class="cl">        └── packt
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="nd">@Component</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">ChoiceRouteBuilder</span> <span class="p">:</span> <span class="n">RouteBuilder</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">workDir</span> <span class="p">=</span> <span class="nc">System</span><span class="p">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&#34;PWD&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">input</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="si">$workDir</span><span class="s2">/orders/in/publisher?include=pub-.*xml&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">output</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="si">$workDir</span><span class="s2">/orders/out/publisher&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">final</span> <span class="k">val</span> <span class="py">XPATH</span><span class="n">_SEARCH_ORLY</span> <span class="p">=</span> <span class="s2">&#34;order/orderItems/orderItem/orderItemPublisherName/text() = &#39;ORly&#39;&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">final</span> <span class="k">val</span> <span class="py">XPATH</span><span class="n">_SEARCH_PACKT</span> <span class="p">=</span> <span class="s2">&#34;order/orderItems/orderItem/orderItemPublisherName/text() = &#39;Packt&#39;&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nd">@Throws</span><span class="p">(</span><span class="n">Exception</span><span class="o">::</span><span class="k">class</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">override</span> <span class="k">fun</span> <span class="nf">configure</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">from</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$input</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;log:ordersReceived&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">choice</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">`when`</span><span class="p">(</span><span class="n">xpath</span><span class="p">(</span><span class="n">XPATH_SEARCH_ORLY</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&#34;ORly received&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$output</span><span class="s2">/orly&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">`when`</span><span class="p">(</span><span class="n">xpath</span><span class="p">(</span><span class="n">XPATH_SEARCH_PACKT</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&#34;Packt received&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$output</span><span class="s2">/packt&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">otherwise</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">log</span><span class="p">(</span><span class="s2">&#34;Other received&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&#34;file:</span><span class="si">$output</span><span class="s2">/others&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">            <span class="p">.</span><span class="n">end</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tree
+</span></span><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── in
+</span></span><span class="line"><span class="cl">│   └── publisher
+</span></span><span class="line"><span class="cl">└── out
+</span></span><span class="line"><span class="cl">    └── publisher
+</span></span><span class="line"><span class="cl">        ├── orly
+</span></span><span class="line"><span class="cl">        │   └── pub-orly.xml
+</span></span><span class="line"><span class="cl">        ├── others
+</span></span><span class="line"><span class="cl">        │   └── pub-foo.xml
+</span></span><span class="line"><span class="cl">        └── packt
+</span></span><span class="line"><span class="cl">            └── pub-packt.xml
+</span></span></code></pre></div><hr>
+<p><em>References:</em></p>
+<blockquote>
+<p><a href="https://github.com/marzelwidmer/kboot-camel">GitHub Sample Project</a>
+| <a href="https://spring.io/blog/2018/05/23/spring-tips-apache-camel">Spring Tips Apache Camel</a>
+| <a href="https://camel.apache.org/camel-spring-boot/latest/">Camel Apache Spring Boot</a>
+| <a href="https://www.walkerit.ch/public-ftp">Public FTP</a></p>
+</blockquote>
+</article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script type="application/javascript" src='https://marzelwidmer.github.io/js/toc.js'></script>
+<link rel="stylesheet" href='https://marzelwidmer.github.io/css/toc.css' />
+
+
+  <div class="footer container-xl width-full p-responsive">
+  <div
+    class="position-relative d-flex flex-row-reverse flex-lg-row flex-wrap flex-lg-nowrap flex-justify-center flex-lg-justify-between flex-sm-items-center pt-6 pb-2 mt-6 f6 text-gray border-top border-gray-light ">
+    <a aria-label="Homepage" title="GitHub" class="footer-octicon d-none d-lg-block mr-lg-4" href="https://marzelwidmer.github.io/">
+      <svg height="24" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" width="24">
+        <path fill-rule="evenodd"
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+        </path>
+      </svg>
+    </a>
+    <ul class="list-style-none d-flex flex-wrap col-12 flex-justify-center flex-lg-justify-between mb-2 mb-lg-0">
+      
+      <li class="mr-3 mr-lg-0">Theme by <a href='https://github.com/MeiK2333/github-style'>github-style</a></li>
+      
+    </ul>
+  </div>
+  <div class="d-flex flex-justify-center pb-6">
+    <span class="f6 text-gray-light"></span>
+  </div>
+
+
+</div>
+</body>
+
+<script type="application/javascript" src="https://marzelwidmer.github.io/js/github-style.js"></script>
+
+
+
+
+</html>

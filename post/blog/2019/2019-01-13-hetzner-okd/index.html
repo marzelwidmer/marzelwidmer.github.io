@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script type="application/javascript" src='https://marzelwidmer.github.io/js/theme-mode.js'></script>
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/frameworks.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github-style.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/light.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/dark.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/syntax.css' />
+    <title>Install OKD on Hetzner Cloud - Marcel Widmer</title>
+    
+    <link rel="icon" type="image/x-icon" href='https://marzelwidmer.github.io/images/favicon.ico'>
+    
+    <meta name="theme-color" content="#1e2327">
+
+    
+    <meta name="description"
+  content="Inspiration from Installation of OKD 3.10 from start to finish
+Create a Hetzner VM with the CLI https://github.com/hetznercloud/cli
+hcloud (Hetzner CLI) Let&amp;rsquo;s check first some hcloud command that we can use later to create a VM with the right size and in the Datacenter we want.
+hcloud server create --name &amp;lt;YOUR_DOMAIN&amp;gt; --type &amp;lt;SERVER-TYPE&amp;gt; --image &amp;lt;IMAGE&amp;gt; --ssh-key &amp;lt;YOUR_HETZNER_SSH_KEY&amp;gt; --datacenter &amp;lt;DATACENTER&amp;gt; Server Type hcloud server-type list ID NAME CORES MEMORY DISK STORAGE TYPE 1 cx11 1 2." />
+<meta name="keywords"
+  content='google analytics' />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://marzelwidmer.github.io/post/blog/2019/2019-01-13-hetzner-okd/" />
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Install OKD on Hetzner Cloud - Marcel Widmer" />
+<meta name="twitter:description"
+  content="Inspiration from Installation of OKD 3.10 from start to finish
+Create a Hetzner VM with the CLI https://github.com/hetznercloud/cli
+hcloud (Hetzner CLI) Let&amp;rsquo;s check first some hcloud command that we can use later to create a VM with the right size and in the Datacenter we want.
+hcloud server create --name &amp;lt;YOUR_DOMAIN&amp;gt; --type &amp;lt;SERVER-TYPE&amp;gt; --image &amp;lt;IMAGE&amp;gt; --ssh-key &amp;lt;YOUR_HETZNER_SSH_KEY&amp;gt; --datacenter &amp;lt;DATACENTER&amp;gt; Server Type hcloud server-type list ID NAME CORES MEMORY DISK STORAGE TYPE 1 cx11 1 2." />
+<meta name="twitter:site" content="https://marzelwidmer.github.io/" />
+<meta name="twitter:creator" content="" />
+<meta name="twitter:image"
+  content="https://marzelwidmer.github.io/">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Install OKD on Hetzner Cloud - Marcel Widmer">
+<meta property="og:description"
+  content="Inspiration from Installation of OKD 3.10 from start to finish
+Create a Hetzner VM with the CLI https://github.com/hetznercloud/cli
+hcloud (Hetzner CLI) Let&amp;rsquo;s check first some hcloud command that we can use later to create a VM with the right size and in the Datacenter we want.
+hcloud server create --name &amp;lt;YOUR_DOMAIN&amp;gt; --type &amp;lt;SERVER-TYPE&amp;gt; --image &amp;lt;IMAGE&amp;gt; --ssh-key &amp;lt;YOUR_HETZNER_SSH_KEY&amp;gt; --datacenter &amp;lt;DATACENTER&amp;gt; Server Type hcloud server-type list ID NAME CORES MEMORY DISK STORAGE TYPE 1 cx11 1 2." />
+<meta property="og:url" content="https://marzelwidmer.github.io/post/blog/2019/2019-01-13-hetzner-okd/" />
+<meta property="og:site_name" content="Install OKD on Hetzner Cloud" />
+<meta property="og:image"
+  content="https://marzelwidmer.github.io/">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+<meta property="article:published_time" content="2019-01-13 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body>
+  <div style="position: relative">
+  <header class="Header js-details-container Details px-3 px-md-4 px-lg-5 flex-wrap flex-md-nowrap open Details--on">
+    <div class="Header-item mobile-none" style="margin-top: -4px; margin-bottom: -4px;">
+      <a class="Header-link" href="https://marzelwidmer.github.io/">
+        <img class="octicon" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item d-md-none">
+      <button class="Header-link btn-link js-details-target" type="button"
+        onclick="document.querySelector('#header-search').style.display = document.querySelector('#header-search').style.display == 'none'? 'block': 'none'">
+        <img height="24" class="octicon octicon-three-bars" width="24" src="/images/GitHub-Mark-Light-32px.png">
+      </button>
+    </div>
+    <div style="display: none;" id="header-search"
+      class="Header-item Header-item--full flex-column flex-md-row width-full flex-order-2 flex-md-order-none mr-0 mr-md-3 mt-3 mt-md-0 Details-content--hidden-not-important d-md-flex">
+      <div
+        class="Header-search header-search flex-auto js-site-search position-relative flex-self-stretch flex-md-self-auto mb-3 mb-md-0 mr-0 mr-md-3 scoped-search site-scoped-search js-jump-to">
+        <div class="position-relative">
+          <form target="_blank" action="https://www.google.com/search" accept-charset="UTF-8" method="get"
+            autocomplete="off">
+            <label
+              class="Header-search-label form-control input-sm header-search-wrapper p-0 js-chromeless-input-container header-search-wrapper-jump-to position-relative d-flex flex-justify-between flex-items-center">
+              <input type="text"
+                class="Header-search-input form-control input-sm header-search-input jump-to-field js-jump-to-field js-site-search-focus js-site-search-field is-clearable"
+                name="q" value="" placeholder="Search" autocomplete="off">
+              <input type="hidden" name="q" value="site:https://marzelwidmer.github.io/">
+            </label>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="Header-item Header-item--full flex-justify-center d-md-none position-relative">
+      <a class="Header-link " href="https://marzelwidmer.github.io/">
+        <img class="octicon octicon-mark-github v-align-middle" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item" style="margin-right: 0;">
+      <a href="javascript:void(0)" class="Header-link no-select" onclick="switchTheme()">
+        <svg style="fill: var(--color-profile-color-modes-toggle-moon);" class="no-select" viewBox="0 0 16 16"
+          version="1.1" width="16" height="16">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M4.52208 7.71754C7.5782 7.71754 10.0557 5.24006 10.0557 2.18394C10.0557 1.93498 10.0392 1.68986 10.0074 1.44961C9.95801 1.07727 10.3495 0.771159 10.6474 0.99992C12.1153 2.12716 13.0615 3.89999 13.0615 5.89383C13.0615 9.29958 10.3006 12.0605 6.89485 12.0605C3.95334 12.0605 1.49286 10.001 0.876728 7.24527C0.794841 6.87902 1.23668 6.65289 1.55321 6.85451C2.41106 7.40095 3.4296 7.71754 4.52208 7.71754Z">
+          </path>
+        </svg>
+      </a>
+    </div>
+  </header>
+</div>
+
+  
+<div>
+  <main>
+    <div class="gisthead pagehead bg-gray-light pb-0 pt-3 mb-4">
+      <div class="px-0">
+        <div class="mb-3 d-flex px-3 px-md-3 px-lg-5">
+          <div class="flex-auto min-width-0 width-fit mr-3">
+            <div class="d-flex">
+              <div class="d-none d-md-block">
+                <a class="avatar mr-2 flex-shrink-0" href="https://marzelwidmer.github.io/">
+                  <img class=" avatar-user"
+                    src="/images/avatar.png"
+                    width="32" height="32"></a>
+              </div>
+              <div class="d-flex flex-column">
+                <h1 class="break-word f3 text-normal mb-md-0 mb-1">
+                  <span class="author">
+                    <a href="https://marzelwidmer.github.io/">Marcel Widmer</a></span><span
+                    class="path-divider">/</span><strong class="css-truncate-target mr-1" style="max-width: 410px"><a
+                      href="https://marzelwidmer.github.io/post/blog/2019/2019-01-13-hetzner-okd/">Install OKD on Hetzner Cloud</a></strong>
+                </h1>
+                <div class="note m-0">
+                  Created <relative-time datetime="Sun, 13 Jan 2019 00:00:00 &#43;0000"
+                    class="no-wrap">
+                    Sun, 13 Jan 2019 00:00:00 &#43;0000</relative-time>
+
+                  
+                  <span class="file-info-divider"></span>
+                  Modified <relative-time datetime="Fri, 16 Feb 2024 08:20:05 &#43;0100"
+                    class="no-wrap">
+                    Fri, 16 Feb 2024 08:20:05 &#43;0100</relative-time>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-lg px-3 new-discussion-timeline">
+      <div class="repository-content gist-content">
+        <div>
+          <div class="js-gist-file-update-container js-task-list-container file-box">
+            <div id="file-pytest" class="file my-2">
+              <div id="post-header" class="file-header d-flex flex-md-items-center flex-items-start sticky-header" style="z-index: 2">
+                <div class="file-info d-flex flex-md-items-center flex-items-start flex-order-1 flex-auto">
+                  <div class="text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1 mt-2 mt-md-0">
+                    
+                    <summary id="toc-toggle" onclick="clickToc()" class="btn btn-octicon m-0 mr-2 p-2">
+                      <svg aria-hidden="true" viewBox="0 0 16 16" height="16" width="16" class="octicon octicon-list-unordered">
+                        <path fill-rule="evenodd" d="M2 4a1 1 0 100-2 1 1 0 000 2zm3.75-1.5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zM3 8a1 1 0 11-2 0 1 1 0 012 0zm-1 6a1 1 0 100-2 1 1 0 000 2z"></path>
+                      </svg>
+                    </summary>
+                    <details-menu class="SelectMenu" id="toc-details" style="display: none;">
+                      <div class="SelectMenu-modal rounded-3 mt-1" style="max-height: 340px;">
+                        <div class="SelectMenu-list SelectMenu-list--borderless p-2" style="overscroll-behavior: contain;" id="toc-list">
+                        </div>
+                      </div>
+                    </details-menu>
+                      1744 Words
+                    
+
+                  </div>
+                  <div class="file-actions flex-order-2 pt-0">
+                    
+                    
+                    <a class="muted-link mr-3" href="/tags/k8s">
+                      <svg class="octicon octicon-tag" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                        <path fill-rule="evenodd"
+                          d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z">
+                        </path>
+                      </svg>
+                      k8s
+                    </a>
+                    
+                    <a class="muted-link mr-3" href="/tags/hetzner-cloud">
+                      <svg class="octicon octicon-tag" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                        <path fill-rule="evenodd"
+                          d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z">
+                        </path>
+                      </svg>
+                      Hetzner Cloud
+                    </a>
+                    
+                    
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="Box-body px-5 pb-5" style="z-index: 1">
+                <article class="markdown-body entry-content container-lg"><p>Inspiration from <a href="https://www.youtube.com/watch?v=ZkFIozGY0IA">Installation of OKD 3.10 from start to finish</a></p>
+<p>Create a <code>Hetzner VM</code> with the CLI <a href="https://github.com/hetznercloud/cli">https://github.com/hetznercloud/cli</a></p>
+<h1 id="hcloud-hetzner-cli">hcloud (Hetzner CLI)</h1>
+<p>Let&rsquo;s check first some <code>hcloud</code> command that we can use later to create a <code>VM</code> with the right size and in the <code>Datacenter</code> we want.</p>
+<p><img src="/static/hetzner/hetzner-preis.png" alt="hetzner-preis"></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hcloud server create --name &lt;YOUR_DOMAIN&gt; --type &lt;SERVER-TYPE&gt; --image &lt;IMAGE&gt; --ssh-key &lt;YOUR_HETZNER_SSH_KEY&gt; --datacenter &lt;DATACENTER&gt;
+</span></span></code></pre></div><h2 id="server-type">Server Type</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hcloud server-type list
+</span></span><span class="line"><span class="cl">ID   NAME        CORES   MEMORY     DISK     STORAGE TYPE
+</span></span><span class="line"><span class="cl"><span class="m">1</span>    cx11        <span class="m">1</span>       2.0 GB     <span class="m">20</span> GB    <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">2</span>    cx11-ceph   <span class="m">1</span>       2.0 GB     <span class="m">20</span> GB    network
+</span></span><span class="line"><span class="cl"><span class="m">3</span>    cx21        <span class="m">2</span>       4.0 GB     <span class="m">40</span> GB    <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">4</span>    cx21-ceph   <span class="m">2</span>       4.0 GB     <span class="m">40</span> GB    network
+</span></span><span class="line"><span class="cl"><span class="m">5</span>    cx31        <span class="m">2</span>       8.0 GB     <span class="m">80</span> GB    <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">6</span>    cx31-ceph   <span class="m">2</span>       8.0 GB     <span class="m">80</span> GB    network
+</span></span><span class="line"><span class="cl"><span class="m">7</span>    cx41        <span class="m">4</span>       16.0 GB    <span class="m">160</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">8</span>    cx41-ceph   <span class="m">4</span>       16.0 GB    <span class="m">160</span> GB   network
+</span></span><span class="line"><span class="cl"><span class="m">9</span>    cx51        <span class="m">8</span>       32.0 GB    <span class="m">240</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">10</span>   cx51-ceph   <span class="m">8</span>       32.0 GB    <span class="m">240</span> GB   network
+</span></span><span class="line"><span class="cl"><span class="m">11</span>   ccx11       <span class="m">2</span>       8.0 GB     <span class="m">80</span> GB    <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">12</span>   ccx21       <span class="m">4</span>       16.0 GB    <span class="m">160</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">13</span>   ccx31       <span class="m">8</span>       32.0 GB    <span class="m">240</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">14</span>   ccx41       <span class="m">16</span>      64.0 GB    <span class="m">360</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">15</span>   ccx51       <span class="m">32</span>      128.0 GB   <span class="m">600</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">22</span>   cpx11       <span class="m">2</span>       2.0 GB     <span class="m">40</span> GB    <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">23</span>   cpx21       <span class="m">3</span>       4.0 GB     <span class="m">80</span> GB    <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">24</span>   cpx31       <span class="m">4</span>       8.0 GB     <span class="m">160</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">25</span>   cpx41       <span class="m">8</span>       16.0 GB    <span class="m">240</span> GB   <span class="nb">local</span>
+</span></span><span class="line"><span class="cl"><span class="m">26</span>   cpx51       <span class="m">16</span>      32.0 GB    <span class="m">360</span> GB   <span class="nb">local</span>
+</span></span></code></pre></div><h2 id="image">Image</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hcloud image list
+</span></span><span class="line"><span class="cl">ID         TYPE     NAME           DESCRIPTION    IMAGE SIZE   DISK SIZE   CREATED
+</span></span><span class="line"><span class="cl"><span class="m">1</span>          system   ubuntu-16.04   Ubuntu 16.04   -            <span class="m">5</span> GB        <span class="m">2</span> years ago
+</span></span><span class="line"><span class="cl"><span class="m">2</span>          system   debian-9       Debian <span class="m">9</span>       -            <span class="m">5</span> GB        <span class="m">2</span> years ago
+</span></span><span class="line"><span class="cl"><span class="m">3</span>          system   centos-7       CentOS <span class="m">7</span>       -            <span class="m">5</span> GB        <span class="m">2</span> years ago
+</span></span><span class="line"><span class="cl"><span class="m">168855</span>     system   ubuntu-18.04   Ubuntu 18.04   -            <span class="m">5</span> GB        <span class="m">2</span> years ago
+</span></span><span class="line"><span class="cl"><span class="m">5924233</span>    system   debian-10      Debian <span class="m">10</span>      -            <span class="m">5</span> GB        <span class="m">9</span> months ago
+</span></span><span class="line"><span class="cl"><span class="m">8356453</span>    system   centos-8       CentOS <span class="m">8</span>       -            <span class="m">5</span> GB        <span class="m">6</span> months ago
+</span></span><span class="line"><span class="cl"><span class="m">9032843</span>    system   fedora-31      Fedora <span class="m">31</span>      -            <span class="m">5</span> GB        <span class="m">5</span> months ago
+</span></span><span class="line"><span class="cl"><span class="m">15512617</span>   system   ubuntu-20.04   Ubuntu 20.04   -            <span class="m">5</span> GB        <span class="m">2</span> days ago
+</span></span></code></pre></div><h2 id="datacenter">Datacenter</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hcloud datacenter list
+</span></span><span class="line"><span class="cl">ID   NAME        DESCRIPTION          LOCATION
+</span></span><span class="line"><span class="cl"><span class="m">2</span>    nbg1-dc3    Nuremberg <span class="m">1</span> DC <span class="m">3</span>     nbg1
+</span></span><span class="line"><span class="cl"><span class="m">3</span>    hel1-dc2    Helsinki <span class="m">1</span> DC <span class="m">2</span>      hel1
+</span></span><span class="line"><span class="cl"><span class="m">4</span>    fsn1-dc14   Falkenstein <span class="m">1</span> DC14   fsn1
+</span></span></code></pre></div><h2 id="create-server">Create Server</h2>
+<p>Let&rsquo;s create a Server <code>cx41</code> with CentOS <code>centos-7</code> (because of some issues with <code>centos-8</code>) on a data center in Nuremberg <code>nbg1-dc3</code>.
+When the Server is we will get a Public IP <code>116.203.16.100</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hcloud server create --name keepcalm.ch --type cx41 --image centos-8 --ssh-key ~/.ssh/id_rsa_hetzner.pub --datacenter nbg1-dc3
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">6s <span class="o">[=====================================]</span> 100.00%
+</span></span><span class="line"><span class="cl">Waiting <span class="k">for</span> server <span class="m">5577861</span> to have started
+</span></span><span class="line"><span class="cl"> ... <span class="k">done</span>
+</span></span><span class="line"><span class="cl">Server <span class="m">5577861</span> created
+</span></span><span class="line"><span class="cl">IPv4: 116.203.16.100
+</span></span></code></pre></div><h3 id="rebuild-server">Rebuild Server</h3>
+<p>if you have already one and want it just rest and re-install the cluster you can user the following command.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hcloud server rebuild keepcalm.ch --image centos-7
+</span></span></code></pre></div><h3 id="delete-server">Delete Server</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hcloud server delete keepcalm.ch
+</span></span></code></pre></div><h1 id="configure-dns">Configure DNS</h1>
+<p>Configure now the following <code>DNS</code> entries in your <code>DNS</code> provider with the <code>IP</code> from <code>Hetzner</code> in my case I have <a href="https://www.gandi.net/en">gandi.net</a>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">@ 10800 IN SOA ns1.gandi.net. hostmaster.gandi.net. 1585063961 10800 3600 604800 10800
+</span></span><span class="line"><span class="cl">* 420 IN CNAME apps.console
+</span></span><span class="line"><span class="cl">@ 1800 IN A 116.203.16.100
+</span></span><span class="line"><span class="cl">apps.console 300 IN A 116.203.16.100
+</span></span><span class="line"><span class="cl">console 300 IN A 116.203.16.100
+</span></span></code></pre></div><h1 id="install-okd">Install OKD</h1>
+<p>Now you can connect with <code>SSH</code> to your <code>VM</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ssh -i ~/.ssh/id_rsa_hetzner root@keepcalm.ch
+</span></span><span class="line"><span class="cl">The authenticity of host <span class="s1">&#39;keepcalm.ch (116.203.16.100)&#39;</span> can<span class="s1">&#39;t be established.
+</span></span></span><span class="line"><span class="cl"><span class="s1">ECDSA key fingerprint is SHA256:mc7itrGp4777okbKnKDKPDlQwkMi0e4awyh6cfssNXM.
+</span></span></span><span class="line"><span class="cl"><span class="s1">Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+</span></span></span><span class="line"><span class="cl"><span class="s1">Warning: Permanently added &#39;</span>keepcalm.ch,116.203.16.100<span class="err">&#39;</span> <span class="o">(</span>ECDSA<span class="o">)</span> to the list of known hosts.
+</span></span><span class="line"><span class="cl">Last failed login: Sun Apr <span class="m">26</span> 12:02:57 CEST <span class="m">2020</span> from 51.77.212.235 on ssh:notty
+</span></span><span class="line"><span class="cl">There were <span class="m">3</span> failed login attempts since the last successful login.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@keepcalm ~<span class="o">]</span><span class="c1">#</span>
+</span></span></code></pre></div><h2 id="update-system-and-install-git">Update System and install GIT</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">yum -y update <span class="o">&amp;&amp;</span> yum -y install git
+</span></span></code></pre></div><h2 id="clone-git-repo">Clone Git Repo</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/marzelwidmer/installcentos.git
+</span></span></code></pre></div><h2 id="update-user-custom-exports-script">Update user-custom-exports script</h2>
+<p>Update <code>user-custom-exports.sh</code> script with your domain specific settings.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">cd</span> installcentos <span class="o">&amp;&amp;</span> vi user-custom-exports.sh
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">#!/bin/bash
+</span></span><span class="line"><span class="cl">export DOMAIN=&#34;keepcalm.ch&#34;
+</span></span><span class="line"><span class="cl">export USERNAME=&#34;admin&#34;
+</span></span><span class="line"><span class="cl">export PASSWORD=&#34;password&#34;
+</span></span><span class="line"><span class="cl">export MAIL=&#34;marzelwidmer@gmail.com&#34;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">export SCRIPT_REPO=&#34;&#34;
+</span></span><span class="line"><span class="cl">export IP=&#34;&#34;
+</span></span><span class="line"><span class="cl">export DISK=&#34;&#34;
+</span></span></code></pre></div><h2 id="load-user-custom-exports-script">Load user-custom-exports script</h2>
+<p>Execute the shell script to load the variables</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">. user-custom-exports.sh
+</span></span></code></pre></div><h2 id="start-install-script">Start install script</h2>
+<p>Now we can execute the installation script and press enter till the question <code>Do you wish to enable HTTPS with Let``s Encrypt</code>
+There we choose <code>1) Yes</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">root@keepcalm installcentos<span class="o">]</span><span class="c1"># ./install-openshift.sh</span>
+</span></span><span class="line"><span class="cl">Domain to use: <span class="o">(</span>keepcalm.ch<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">Username: <span class="o">(</span>admin<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">Password: <span class="o">(</span>password<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">OpenShift Version: <span class="o">(</span>3.11<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">IP: <span class="o">(</span>0<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">API Port: <span class="o">(</span>8443<span class="o">)</span>:
+</span></span><span class="line"><span class="cl">Do you wish to <span class="nb">enable</span> HTTPS with Let<span class="s1">&#39;s Encrypt?
+</span></span></span><span class="line"><span class="cl"><span class="s1">Warnings:
+</span></span></span><span class="line"><span class="cl"><span class="s1">  Let&#39;</span>s Encrypt only works <span class="k">if</span> the IP is using publicly accessible IP and custom certificates.
+</span></span><span class="line"><span class="cl">  This feature doesn<span class="err">&#39;</span>t work with OpenShift CLI <span class="k">for</span> now.
+</span></span><span class="line"><span class="cl">1<span class="o">)</span> Yes
+</span></span><span class="line"><span class="cl">2<span class="o">)</span> No
+</span></span></code></pre></div><p>The following questions we answer with yes.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Complete!
+</span></span><span class="line"><span class="cl">Saving debug log to /var/log/letsencrypt/letsencrypt.log
+</span></span><span class="line"><span class="cl">Plugins selected: Authenticator manual, Installer None
+</span></span><span class="line"><span class="cl">Starting new HTTPS connection <span class="o">(</span>1<span class="o">)</span>: acme-v02.api.letsencrypt.org
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl">Would you be willing to share your email address with the Electronic Frontier
+</span></span><span class="line"><span class="cl">Foundation, a founding partner of the Let<span class="s1">&#39;s Encrypt project and the non-profit
+</span></span></span><span class="line"><span class="cl"><span class="s1">organization that develops Certbot? We&#39;</span>d like to send you email about our work
+</span></span><span class="line"><span class="cl">encrypting the web, EFF news, campaigns, and ways to support digital freedom.
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl"><span class="o">(</span>Y<span class="o">)</span>es/<span class="o">(</span>N<span class="o">)</span>o: yes
+</span></span><span class="line"><span class="cl">Starting new HTTPS connection <span class="o">(</span>1<span class="o">)</span>: supporters.eff.org
+</span></span><span class="line"><span class="cl">Obtaining a new certificate
+</span></span><span class="line"><span class="cl">Performing the following challenges:
+</span></span><span class="line"><span class="cl">dns-01 challenge <span class="k">for</span> apps.keepcalm.ch
+</span></span><span class="line"><span class="cl">dns-01 challenge <span class="k">for</span> keepcalm.ch
+</span></span><span class="line"><span class="cl">dns-01 challenge <span class="k">for</span> keepcalm.ch
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl">NOTE: The IP of this machine will be publicly logged as having requested this
+</span></span><span class="line"><span class="cl">certificate. If you<span class="s1">&#39;re running certbot in manual mode on a machine that is not
+</span></span></span><span class="line"><span class="cl"><span class="s1">your server, please ensure you&#39;</span>re okay with that.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Are you OK with your IP being logged?
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl"><span class="o">(</span>Y<span class="o">)</span>es/<span class="o">(</span>N<span class="o">)</span>o: yes
+</span></span></code></pre></div><blockquote>
+<p>⚠️ <strong>Important Steps</strong>: Be sure you update the <code>DNS TXT</code> records with the prompted values</p>
+</blockquote>
+<p>The following values you have to add in you <code>DNS</code>.
+So let&rsquo;s open again the <code>DNS</code> Admin console from your provider.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl">Please deploy a DNS TXT record under the name
+</span></span><span class="line"><span class="cl">_acme-challenge.apps.keepcalm.ch with the following value:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">xj9uF017asqGXhuS1VPhA3idwmUq__UgUTscTMYgbxI
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Before continuing, verify the record is deployed.
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl">Press Enter to Continue
+</span></span></code></pre></div><p>In my case something like so :</p>
+<p><img src="/static/hetzner/acme.png" alt="acme"></p>
+<p>You can check the <code>DNS</code> with <a href="https://dnschecker.org/#TXT/_acme-challenge.apps.keepcalm.ch">https://dnschecker.org/</a>
+Check with <code>host</code> command.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">host -t txt _acme-challenge.apps.keepcalm.ch
+</span></span><span class="line"><span class="cl">_acme-challenge.apps.keepcalm.ch descriptive text <span class="s2">&#34;xj9uF017asqGXhuS1VPhA3idwmUq__UgUTscTMYgbxI&#34;</span>
+</span></span></code></pre></div><p>Your <code>DNS</code> will look like this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">@ 10800 IN SOA ns1.gandi.net. hostmaster.gandi.net. 1587897751 10800 3600 604800 10800
+</span></span><span class="line"><span class="cl">* 420 IN CNAME apps.console
+</span></span><span class="line"><span class="cl">@ 1800 IN A 116.203.16.100
+</span></span><span class="line"><span class="cl">_acme-challenge 300 IN TXT &#34;H2S720yowtzUBVKq3EbH6W8rmgg7qzF0EEVF_IZOz9c&#34;
+</span></span><span class="line"><span class="cl">_acme-challenge 300 IN TXT &#34;dpMeonbQDeHkbJopDOuXw1j4NtFHXzEvr8CGutiRX8w&#34;
+</span></span><span class="line"><span class="cl">_acme-challenge.apps 300 IN TXT &#34;xj9uF017asqGXhuS1VPhA3idwmUq__UgUTscTMYgbxI&#34;
+</span></span><span class="line"><span class="cl">apps.console 300 IN A 116.203.16.100
+</span></span><span class="line"><span class="cl">console 300 IN A 116.203.16.100
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">Before continuing, verify the record is deployed.
+</span></span><span class="line"><span class="cl"><span class="o">(</span>This must be <span class="nb">set</span> up in addition to the previous challenges<span class="p">;</span> <span class="k">do</span> not remove,
+</span></span><span class="line"><span class="cl">replace, or undo the previous challenge tasks yet. Note that you might be
+</span></span><span class="line"><span class="cl">asked to create multiple distinct TXT records with the same name. This is
+</span></span><span class="line"><span class="cl">permitted by DNS standards.<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl">Press Enter to Continue
+</span></span><span class="line"><span class="cl">Waiting <span class="k">for</span> verification...
+</span></span><span class="line"><span class="cl">Resetting dropped connection: acme-v02.api.letsencrypt.org
+</span></span><span class="line"><span class="cl">Cleaning up challenges
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">IMPORTANT NOTES:
+</span></span><span class="line"><span class="cl"> - Congratulations! Your certificate and chain have been saved at:
+</span></span><span class="line"><span class="cl">   /etc/letsencrypt/live/keepcalm.ch/fullchain.pem
+</span></span><span class="line"><span class="cl">   Your key file has been saved at:
+</span></span><span class="line"><span class="cl">   /etc/letsencrypt/live/keepcalm.ch/privkey.pem
+</span></span><span class="line"><span class="cl">   Your cert will expire on 2020-07-25. To obtain a new or tweaked
+</span></span><span class="line"><span class="cl">   version of this certificate in the future, simply run certbot
+</span></span><span class="line"><span class="cl">   again. To non-interactively renew *all* of your certificates, run
+</span></span><span class="line"><span class="cl">   <span class="s2">&#34;certbot renew&#34;</span>
+</span></span><span class="line"><span class="cl"> - Your account credentials have been saved in your Certbot
+</span></span><span class="line"><span class="cl">   configuration directory at /etc/letsencrypt. You should make a
+</span></span><span class="line"><span class="cl">   secure backup of this folder now. This configuration directory will
+</span></span><span class="line"><span class="cl">   also contain certificates and private keys obtained by Certbot so
+</span></span><span class="line"><span class="cl">   making regular backups of this folder is ideal.
+</span></span><span class="line"><span class="cl"> - If you like Certbot, please consider supporting our work by:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">   Donating to ISRG / Let<span class="err">&#39;</span>s Encrypt:   https://letsencrypt.org/donate
+</span></span><span class="line"><span class="cl">   Donating to EFF:                    https://eff.org/donate-le
+</span></span></code></pre></div><p>Now you have to wait some minutes till the installation is finished.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">created volume <span class="m">199</span>
+</span></span><span class="line"><span class="cl">persistentvolume/vol200 created
+</span></span><span class="line"><span class="cl">created volume <span class="m">200</span>
+</span></span><span class="line"><span class="cl">******
+</span></span><span class="line"><span class="cl">* Your console is https://console.keepcalm.ch:8443
+</span></span><span class="line"><span class="cl">* Your username is admin
+</span></span><span class="line"><span class="cl">* Your password is password
+</span></span><span class="line"><span class="cl">*
+</span></span><span class="line"><span class="cl">* Login using:
+</span></span><span class="line"><span class="cl">*
+</span></span><span class="line"><span class="cl">$ oc login -u admin -p password https://console.keepcalm.ch:8443/
+</span></span><span class="line"><span class="cl">******
+</span></span><span class="line"><span class="cl">Login successful.
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">You have access to the following projects and can switch between them with <span class="s1">&#39;oc project &lt;projectname&gt;&#39;</span>:
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  * default
+</span></span><span class="line"><span class="cl">    kube-public
+</span></span><span class="line"><span class="cl">    kube-service-catalog
+</span></span><span class="line"><span class="cl">    kube-system
+</span></span><span class="line"><span class="cl">    management-infra
+</span></span><span class="line"><span class="cl">    openshift
+</span></span><span class="line"><span class="cl">    openshift-console
+</span></span><span class="line"><span class="cl">    openshift-infra
+</span></span><span class="line"><span class="cl">    openshift-logging
+</span></span><span class="line"><span class="cl">    openshift-metrics-server
+</span></span><span class="line"><span class="cl">    openshift-monitoring
+</span></span><span class="line"><span class="cl">    openshift-node
+</span></span><span class="line"><span class="cl">    openshift-sdn
+</span></span><span class="line"><span class="cl">    openshift-template-service-broker
+</span></span><span class="line"><span class="cl">    openshift-web-console
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Using project <span class="s2">&#34;default&#34;</span>.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>root@keepcalm installcentos<span class="o">]</span><span class="c1">#</span>
+</span></span></code></pre></div><p>After the installation is finish you can on : <a href="https://console.keepcalm.ch:8443/console/catalog">https://console.keepcalm.ch:8443/console/catalog</a>
+You have now a <code>OKD</code> instance with Let&rsquo;s Encrypt.</p>
+<p><img src="/static/hetzner//console.png" alt="hetzner-preis"></p>
+<h1 id="renewal-lets-encrypt">Renewal Let&rsquo;s Encrypt</h1>
+<p>There is a <code>crontab</code> with renew command.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">crontab -l
+</span></span><span class="line"><span class="cl">@weekly  certbot renew --pre-hook<span class="o">=</span><span class="s2">&#34;oc scale --replicas=0 dc router&#34;</span> --post-hook<span class="o">=</span><span class="s2">&#34;oc scale --replicas=1 dc router&#34;</span>
+</span></span></code></pre></div><h2 id="check-certificate">Check Certificate</h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certbot certificates
+</span></span><span class="line"><span class="cl">Saving debug log to /var/log/letsencrypt/letsencrypt.log
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span><span class="line"><span class="cl">Found the following certs:
+</span></span><span class="line"><span class="cl">  Certificate Name: c3smonkey.ch
+</span></span><span class="line"><span class="cl">    Serial Number: 4657db8105e7b58c87e5f69ff91a84a4178
+</span></span><span class="line"><span class="cl">    Domains: c3smonkey.ch *.apps.c3smonkey.ch *.c3smonkey.ch
+</span></span><span class="line"><span class="cl">    Expiry Date: 2020-10-22 07:16:07+00:00 <span class="o">(</span>VALID: <span class="m">89</span> days<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    Certificate Path: /etc/letsencrypt/live/c3smonkey.ch/fullchain.pem
+</span></span><span class="line"><span class="cl">    Private Key Path: /etc/letsencrypt/live/c3smonkey.ch/privkey.pem
+</span></span><span class="line"><span class="cl">- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+</span></span></code></pre></div></article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script type="application/javascript" src='https://marzelwidmer.github.io/js/toc.js'></script>
+<link rel="stylesheet" href='https://marzelwidmer.github.io/css/toc.css' />
+
+
+  <div class="footer container-xl width-full p-responsive">
+  <div
+    class="position-relative d-flex flex-row-reverse flex-lg-row flex-wrap flex-lg-nowrap flex-justify-center flex-lg-justify-between flex-sm-items-center pt-6 pb-2 mt-6 f6 text-gray border-top border-gray-light ">
+    <a aria-label="Homepage" title="GitHub" class="footer-octicon d-none d-lg-block mr-lg-4" href="https://marzelwidmer.github.io/">
+      <svg height="24" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" width="24">
+        <path fill-rule="evenodd"
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+        </path>
+      </svg>
+    </a>
+    <ul class="list-style-none d-flex flex-wrap col-12 flex-justify-center flex-lg-justify-between mb-2 mb-lg-0">
+      
+      <li class="mr-3 mr-lg-0">Theme by <a href='https://github.com/MeiK2333/github-style'>github-style</a></li>
+      
+    </ul>
+  </div>
+  <div class="d-flex flex-justify-center pb-6">
+    <span class="f6 text-gray-light"></span>
+  </div>
+
+
+</div>
+</body>
+
+<script type="application/javascript" src="https://marzelwidmer.github.io/js/github-style.js"></script>
+
+
+
+
+</html>

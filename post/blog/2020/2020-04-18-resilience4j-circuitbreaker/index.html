@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script type="application/javascript" src='https://marzelwidmer.github.io/js/theme-mode.js'></script>
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/frameworks.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github-style.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/light.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/dark.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/syntax.css' />
+    <title>Reactive Spring Boot with Resilience4j CircuitBreaker - Marcel Widmer</title>
+    
+    <link rel="icon" type="image/x-icon" href='https://marzelwidmer.github.io/images/favicon.ico'>
+    
+    <meta name="theme-color" content="#1e2327">
+
+    
+    <meta name="description"
+  content="Create Project Let&amp;rsquo;s create a Sample Application with Kotlin and Reactive Spring Boot with the spring inializr Rest Endpoint. We will take the latest and greates Spring Boot version 2.3.0.M4 and language kotlin with the following dependencies:
+actuator webflux cloud-resilience4j http https://start.spring.io/starter.tgz \ dependencies==actuator,webflux,cloud-resilience4j \ description==&amp;#34;Demo project Kotlin Spring Boot with Resilience4j&amp;#34; \ applicationName==Resilience4jApplication \ name==kboot-resilience4j \ groupId==ch.keepcalm \ artifactId==kboot-resilience4j \ packageName==ch.keepcalm.demo \ javaVersion==11 \ language==kotlin \ baseDir==kboot-resilience4j| tar -xzvf - Add Customer Banner" />
+<meta name="keywords"
+  content='google analytics' />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://marzelwidmer.github.io/post/blog/2020/2020-04-18-resilience4j-circuitbreaker/" />
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Reactive Spring Boot with Resilience4j CircuitBreaker - Marcel Widmer" />
+<meta name="twitter:description"
+  content="Create Project Let&amp;rsquo;s create a Sample Application with Kotlin and Reactive Spring Boot with the spring inializr Rest Endpoint. We will take the latest and greates Spring Boot version 2.3.0.M4 and language kotlin with the following dependencies:
+actuator webflux cloud-resilience4j http https://start.spring.io/starter.tgz \ dependencies==actuator,webflux,cloud-resilience4j \ description==&amp;#34;Demo project Kotlin Spring Boot with Resilience4j&amp;#34; \ applicationName==Resilience4jApplication \ name==kboot-resilience4j \ groupId==ch.keepcalm \ artifactId==kboot-resilience4j \ packageName==ch.keepcalm.demo \ javaVersion==11 \ language==kotlin \ baseDir==kboot-resilience4j| tar -xzvf - Add Customer Banner" />
+<meta name="twitter:site" content="https://marzelwidmer.github.io/" />
+<meta name="twitter:creator" content="" />
+<meta name="twitter:image"
+  content="https://marzelwidmer.github.io/">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Reactive Spring Boot with Resilience4j CircuitBreaker - Marcel Widmer">
+<meta property="og:description"
+  content="Create Project Let&amp;rsquo;s create a Sample Application with Kotlin and Reactive Spring Boot with the spring inializr Rest Endpoint. We will take the latest and greates Spring Boot version 2.3.0.M4 and language kotlin with the following dependencies:
+actuator webflux cloud-resilience4j http https://start.spring.io/starter.tgz \ dependencies==actuator,webflux,cloud-resilience4j \ description==&amp;#34;Demo project Kotlin Spring Boot with Resilience4j&amp;#34; \ applicationName==Resilience4jApplication \ name==kboot-resilience4j \ groupId==ch.keepcalm \ artifactId==kboot-resilience4j \ packageName==ch.keepcalm.demo \ javaVersion==11 \ language==kotlin \ baseDir==kboot-resilience4j| tar -xzvf - Add Customer Banner" />
+<meta property="og:url" content="https://marzelwidmer.github.io/post/blog/2020/2020-04-18-resilience4j-circuitbreaker/" />
+<meta property="og:site_name" content="Reactive Spring Boot with Resilience4j CircuitBreaker" />
+<meta property="og:image"
+  content="https://marzelwidmer.github.io/">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+<meta property="article:published_time" content="2020-04-18 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body>
+  <div style="position: relative">
+  <header class="Header js-details-container Details px-3 px-md-4 px-lg-5 flex-wrap flex-md-nowrap open Details--on">
+    <div class="Header-item mobile-none" style="margin-top: -4px; margin-bottom: -4px;">
+      <a class="Header-link" href="https://marzelwidmer.github.io/">
+        <img class="octicon" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item d-md-none">
+      <button class="Header-link btn-link js-details-target" type="button"
+        onclick="document.querySelector('#header-search').style.display = document.querySelector('#header-search').style.display == 'none'? 'block': 'none'">
+        <img height="24" class="octicon octicon-three-bars" width="24" src="/images/GitHub-Mark-Light-32px.png">
+      </button>
+    </div>
+    <div style="display: none;" id="header-search"
+      class="Header-item Header-item--full flex-column flex-md-row width-full flex-order-2 flex-md-order-none mr-0 mr-md-3 mt-3 mt-md-0 Details-content--hidden-not-important d-md-flex">
+      <div
+        class="Header-search header-search flex-auto js-site-search position-relative flex-self-stretch flex-md-self-auto mb-3 mb-md-0 mr-0 mr-md-3 scoped-search site-scoped-search js-jump-to">
+        <div class="position-relative">
+          <form target="_blank" action="https://www.google.com/search" accept-charset="UTF-8" method="get"
+            autocomplete="off">
+            <label
+              class="Header-search-label form-control input-sm header-search-wrapper p-0 js-chromeless-input-container header-search-wrapper-jump-to position-relative d-flex flex-justify-between flex-items-center">
+              <input type="text"
+                class="Header-search-input form-control input-sm header-search-input jump-to-field js-jump-to-field js-site-search-focus js-site-search-field is-clearable"
+                name="q" value="" placeholder="Search" autocomplete="off">
+              <input type="hidden" name="q" value="site:https://marzelwidmer.github.io/">
+            </label>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="Header-item Header-item--full flex-justify-center d-md-none position-relative">
+      <a class="Header-link " href="https://marzelwidmer.github.io/">
+        <img class="octicon octicon-mark-github v-align-middle" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item" style="margin-right: 0;">
+      <a href="javascript:void(0)" class="Header-link no-select" onclick="switchTheme()">
+        <svg style="fill: var(--color-profile-color-modes-toggle-moon);" class="no-select" viewBox="0 0 16 16"
+          version="1.1" width="16" height="16">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M4.52208 7.71754C7.5782 7.71754 10.0557 5.24006 10.0557 2.18394C10.0557 1.93498 10.0392 1.68986 10.0074 1.44961C9.95801 1.07727 10.3495 0.771159 10.6474 0.99992C12.1153 2.12716 13.0615 3.89999 13.0615 5.89383C13.0615 9.29958 10.3006 12.0605 6.89485 12.0605C3.95334 12.0605 1.49286 10.001 0.876728 7.24527C0.794841 6.87902 1.23668 6.65289 1.55321 6.85451C2.41106 7.40095 3.4296 7.71754 4.52208 7.71754Z">
+          </path>
+        </svg>
+      </a>
+    </div>
+  </header>
+</div>
+
+  
+<div>
+  <main>
+    <div class="gisthead pagehead bg-gray-light pb-0 pt-3 mb-4">
+      <div class="px-0">
+        <div class="mb-3 d-flex px-3 px-md-3 px-lg-5">
+          <div class="flex-auto min-width-0 width-fit mr-3">
+            <div class="d-flex">
+              <div class="d-none d-md-block">
+                <a class="avatar mr-2 flex-shrink-0" href="https://marzelwidmer.github.io/">
+                  <img class=" avatar-user"
+                    src="/images/avatar.png"
+                    width="32" height="32"></a>
+              </div>
+              <div class="d-flex flex-column">
+                <h1 class="break-word f3 text-normal mb-md-0 mb-1">
+                  <span class="author">
+                    <a href="https://marzelwidmer.github.io/">Marcel Widmer</a></span><span
+                    class="path-divider">/</span><strong class="css-truncate-target mr-1" style="max-width: 410px"><a
+                      href="https://marzelwidmer.github.io/post/blog/2020/2020-04-18-resilience4j-circuitbreaker/">Reactive Spring Boot with Resilience4j CircuitBreaker</a></strong>
+                </h1>
+                <div class="note m-0">
+                  Created <relative-time datetime="Sat, 18 Apr 2020 00:00:00 &#43;0000"
+                    class="no-wrap">
+                    Sat, 18 Apr 2020 00:00:00 &#43;0000</relative-time>
+
+                  
+                  <span class="file-info-divider"></span>
+                  Modified <relative-time datetime="Fri, 16 Feb 2024 08:20:05 &#43;0100"
+                    class="no-wrap">
+                    Fri, 16 Feb 2024 08:20:05 &#43;0100</relative-time>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-lg px-3 new-discussion-timeline">
+      <div class="repository-content gist-content">
+        <div>
+          <div class="js-gist-file-update-container js-task-list-container file-box">
+            <div id="file-pytest" class="file my-2">
+              <div id="post-header" class="file-header d-flex flex-md-items-center flex-items-start sticky-header" style="z-index: 2">
+                <div class="file-info d-flex flex-md-items-center flex-items-start flex-order-1 flex-auto">
+                  <div class="text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1 mt-2 mt-md-0">
+                    
+                    <summary id="toc-toggle" onclick="clickToc()" class="btn btn-octicon m-0 mr-2 p-2">
+                      <svg aria-hidden="true" viewBox="0 0 16 16" height="16" width="16" class="octicon octicon-list-unordered">
+                        <path fill-rule="evenodd" d="M2 4a1 1 0 100-2 1 1 0 000 2zm3.75-1.5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zM3 8a1 1 0 11-2 0 1 1 0 012 0zm-1 6a1 1 0 100-2 1 1 0 000 2z"></path>
+                      </svg>
+                    </summary>
+                    <details-menu class="SelectMenu" id="toc-details" style="display: none;">
+                      <div class="SelectMenu-modal rounded-3 mt-1" style="max-height: 340px;">
+                        <div class="SelectMenu-list SelectMenu-list--borderless p-2" style="overscroll-behavior: contain;" id="toc-list">
+                        </div>
+                      </div>
+                    </details-menu>
+                      971 Words
+                    
+
+                  </div>
+                  <div class="file-actions flex-order-2 pt-0">
+                    
+                    
+                    <a class="muted-link mr-3" href="/tags/spring-boot">
+                      <svg class="octicon octicon-tag" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                        <path fill-rule="evenodd"
+                          d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z">
+                        </path>
+                      </svg>
+                      Spring Boot
+                    </a>
+                    
+                    
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="Box-body px-5 pb-5" style="z-index: 1">
+                <article class="markdown-body entry-content container-lg"><h2 id="create-project">Create Project</h2>
+<p>Let&rsquo;s create a Sample Application with Kotlin and Reactive Spring Boot with the <a href="https://start.spring.io/">spring inializr</a> Rest Endpoint. We will take the latest and greates Spring Boot version <code>2.3.0.M4</code> and language <code>kotlin</code> with the following dependencies:</p>
+<ul>
+<li>actuator</li>
+<li>webflux</li>
+<li>cloud-resilience4j</li>
+</ul>
+<pre tabindex="0"><code>http https://start.spring.io/starter.tgz \
+    dependencies==actuator,webflux,cloud-resilience4j \
+    description==&#34;Demo project Kotlin Spring Boot with Resilience4j&#34; \
+    applicationName==Resilience4jApplication \
+    name==kboot-resilience4j \
+    groupId==ch.keepcalm \
+    artifactId==kboot-resilience4j \
+    packageName==ch.keepcalm.demo \
+    javaVersion==11 \
+    language==kotlin \
+    baseDir==kboot-resilience4j| tar -xzvf -
+</code></pre><p>Add Customer Banner</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">http https://raw.githubusercontent.com/marzelwidmer/marzelwidmer.github.io/master/img/banner.txt <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    &gt; kboot-resilience4j/src/main/resources/banner.txt
+</span></span></code></pre></div><p>Configure <code>spring.applicatin.name</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;spring:
+</span></span></span><span class="line"><span class="cl"><span class="s2">  application:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    name: kboot-resilience4j&#34;</span> <span class="p">|</span> &gt; kboot-resilience4j/src/main/resources/application.yaml
+</span></span></code></pre></div><p>Remove <code>application.properties</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rm kboot-resilience4j/src/main/resources/application.properties
+</span></span></code></pre></div><p>See also my other post <a href="https://blog.marcelwidmer.org/spring-initializr/">Spring Initializr and HTTPie</a></p>
+<h2 id="domain-model">Domain Model</h2>
+<p>Let&rsquo;s start with the <code>Movie</code> domain class with the following properties.</p>
+<ul>
+<li>name</li>
+<li>year</li>
+<li>description</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">data</span> <span class="k">class</span> <span class="nc">Movie</span><span class="p">(</span><span class="k">val</span> <span class="py">id</span><span class="p">:</span> <span class="n">String</span><span class="p">?</span> <span class="p">=</span> <span class="nc">UUID</span><span class="p">.</span><span class="n">randomUUID</span><span class="p">().</span><span class="n">toString</span><span class="p">(),</span> <span class="k">val</span> <span class="py">name</span><span class="p">:</span> <span class="n">String</span><span class="p">,</span> <span class="k">val</span> <span class="py">year</span><span class="p">:</span> <span class="n">Year</span><span class="p">,</span> <span class="k">val</span> <span class="py">description</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span>
+</span></span></code></pre></div><h2 id="service">Service</h2>
+<p>Now we create the service class <code>MovieService</code> who hold some hard coded movies in a list.
+The amazing functions:</p>
+<ul>
+<li>Get all Movies</li>
+<li>Get a random list of Movies</li>
+<li>Get a Movie by his name</li>
+<li>Get a Movie by his ID</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="nd">@Service</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">MovieService</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">private</span> <span class="k">val</span> <span class="py">movies</span> <span class="p">=</span> <span class="n">listOf</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Movie</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="s2">&#34;Matrix&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">year</span> <span class="p">=</span> <span class="nc">Year</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="m">1999</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">description</span> <span class="p">=</span> <span class="s2">&#34;A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Movie</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="s2">&#34;The Godfather&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">year</span> <span class="p">=</span> <span class="nc">Year</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="m">1972</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">description</span> <span class="p">=</span> <span class="s2">&#34;The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Movie</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="s2">&#34;Casablanca&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">year</span> <span class="p">=</span> <span class="nc">Year</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="m">1942</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">description</span> <span class="p">=</span> <span class="s2">&#34;A cynical American expatriate struggles to decide whether or not he should help his former lover and her fugitive husband escape French Morocco.&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">        <span class="n">Movie</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="s2">&#34;Rocky&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="n">year</span> <span class="p">=</span> <span class="nc">Year</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="m">1976</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">            <span class="n">description</span> <span class="p">=</span> <span class="s2">&#34;A small-time boxer gets a supremely rare chance to fight a heavy-weight champion in a bout in which he strives to go the distance for his self-respect.&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">randomMovie</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Mono</span><span class="p">.</span><span class="n">just</span><span class="p">(</span><span class="n">movies</span><span class="p">[</span><span class="n">kotlin</span><span class="p">.</span><span class="n">random</span><span class="p">.</span><span class="nc">Random</span><span class="p">.</span><span class="n">nextInt</span><span class="p">(</span><span class="n">movies</span><span class="p">.</span><span class="n">size</span><span class="p">)])</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">movies</span><span class="p">()</span> <span class="p">=</span> <span class="nc">Flux</span><span class="p">.</span><span class="n">just</span><span class="p">(</span><span class="n">movies</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">movieById</span><span class="p">(</span><span class="n">id</span><span class="p">:</span> <span class="n">String</span><span class="p">)</span> <span class="p">=</span> <span class="nc">Mono</span><span class="p">.</span><span class="n">just</span><span class="p">(</span><span class="n">movies</span><span class="p">.</span><span class="n">first</span> <span class="p">{</span> <span class="k">it</span><span class="p">.</span><span class="n">id</span> <span class="o">==</span> <span class="n">id</span> <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fun</span> <span class="nf">movieByName</span><span class="p">(</span><span class="n">name</span><span class="p">:</span> <span class="n">String</span><span class="p">?):</span> <span class="n">Mono</span><span class="p">&lt;</span><span class="n">Movie</span><span class="p">&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">name</span><span class="o">?.</span><span class="n">map</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">movies</span><span class="p">.</span><span class="n">firstOrNull</span><span class="p">()</span> <span class="p">{</span> <span class="k">it</span><span class="p">.</span><span class="n">name</span><span class="p">.</span><span class="n">toLowerCase</span><span class="p">()</span> <span class="o">==</span> <span class="n">name</span><span class="p">.</span><span class="n">toLowerCase</span><span class="p">()</span> <span class="p">}</span><span class="o">?.</span><span class="n">let</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="k">return</span> <span class="nc">Mono</span><span class="p">.</span><span class="n">just</span><span class="p">(</span><span class="k">it</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}.</span><span class="n">isNullOrEmpty</span><span class="p">().</span><span class="n">apply</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span> <span class="nc">Mono</span><span class="p">.</span><span class="n">error</span><span class="p">(</span><span class="n">IllegalArgumentException</span><span class="p">(</span><span class="s2">&#34;Movie was not found.&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="rest-api">Rest API</h2>
+<p>I think now is time to create a REST API <code>/movies/random</code> with the <a href="https://docs.spring.io/spring-framework/docs/current/kdoc-api/spring-framework/org.springframework.web.reactive.function.server/-router-function-dsl/index.html">Reactive router Kotlin DSL</a>.
+A easy way to create a <code>WebFlux.fn</code> <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/reactive/function/server/RouterFunctions.html">RouterFunction</a>
+Because we have more then one endpoint under <code>/movies</code> we use the <code>&quot;/movies&quot;.nest</code> router function.</p>
+<p>We use also our service <code>MovieService</code> so we need a <a href="https://docs.spring.io/spring/docs/current/kdoc-api/spring-framework/org.springframework.context.support/-bean-definition-dsl/-bean-supplier-context/ref.html">Bean Reference</a> to it.</p>
+<p><code>val service = ref&lt;MovieService&gt;()</code></p>
+<blockquote>
+<p>💡: Take care of the order in the Route definiton &ldquo;/&rdquo; have to be at latest position.</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="k">fun</span> <span class="nf">main</span><span class="p">(</span><span class="n">args</span><span class="p">:</span> <span class="n">Array</span><span class="p">&lt;</span><span class="n">String</span><span class="p">&gt;)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">runApplication</span><span class="p">&lt;</span><span class="n">Resilience4jApplication</span><span class="p">&gt;(*</span><span class="n">args</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">addInitializers</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">            <span class="n">beans</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="n">bean</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                    <span class="n">router</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                         <span class="s2">&#34;movies&#34;</span><span class="p">.</span><span class="n">nest</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                             <span class="k">val</span> <span class="py">service</span> <span class="p">=</span> <span class="n">ref</span><span class="p">&lt;</span><span class="n">MovieService</span><span class="p">&gt;()</span>
+</span></span><span class="line"><span class="cl">                             <span class="c1">//http :8080/movies/random
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                             <span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/random&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                                 <span class="n">ok</span><span class="p">().</span><span class="n">body</span><span class="p">(</span><span class="n">service</span><span class="p">.</span><span class="n">randomMovie</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">                             <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                             <span class="c1">//http :8080/movies/ name==&#34;Rocky&#34; -vv
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                             <span class="n">queryParam</span><span class="p">(</span><span class="s2">&#34;name&#34;</span><span class="p">,</span> <span class="p">{</span> <span class="k">true</span> <span class="p">})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                                 <span class="n">ok</span><span class="p">().</span><span class="n">body</span><span class="p">(</span><span class="n">service</span><span class="p">.</span><span class="n">movieByName</span><span class="p">(</span><span class="n">name</span> <span class="p">=</span> <span class="k">it</span><span class="p">.</span><span class="n">queryParam</span><span class="p">(</span><span class="s2">&#34;name&#34;</span><span class="p">).</span><span class="k">get</span><span class="p">()))</span>
+</span></span><span class="line"><span class="cl">                             <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                             <span class="c1">//http :8080/movies/c7f399bc-ff4c-4a2f-bddf-d92d53a96df2
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                             <span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/{id}&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                                 <span class="n">ok</span><span class="p">().</span><span class="n">body</span><span class="p">(</span><span class="n">service</span><span class="p">.</span><span class="n">movieById</span><span class="p">(</span><span class="n">id</span> <span class="p">=</span> <span class="k">it</span><span class="p">.</span><span class="n">pathVariable</span><span class="p">(</span><span class="s2">&#34;id&#34;</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl">                             <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                             <span class="c1">//http :8080/movies/random
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>                             <span class="n">GET</span><span class="p">(</span><span class="s2">&#34;/&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                                 <span class="n">ok</span><span class="p">().</span><span class="n">body</span><span class="p">(</span><span class="n">service</span><span class="p">.</span><span class="n">movies</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">                             <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                         <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                     <span class="p">}</span>
+</span></span><span class="line"><span class="cl">                <span class="p">}</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="test-rest-api">Test Rest API</h2>
+<p>No is time to make some calls from the terminal with the <code>HTTPie</code> or in a Browser.
+First start the application e.g. with <code>mvn spring-boot:run</code>.</p>
+<p>Then lets call our amazing endpoints with the <code>HTTPie</code> or Browser.</p>
+<h3 id="get-all-movies">Get all Movies</h3>
+<p><a href="http://localhost:8080/movies">http://localhost:8080/movies</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">http :8080/movies/
+</span></span><span class="line"><span class="cl">HTTP/1.1 <span class="m">200</span> OK
+</span></span><span class="line"><span class="cl">Content-Type: application/json
+</span></span><span class="line"><span class="cl">transfer-encoding: chunked
+</span></span><span class="line"><span class="cl"><span class="o">[</span>
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>
+</span></span><span class="line"><span class="cl">        <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;description&#34;</span>: <span class="s2">&#34;A computer hacker learns from mysterious rebels about the true nature of his reality and his role in the war against its controllers.&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;c7f399bc-ff4c-4a2f-bddf-d92d53a96df2&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;Matrix&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;year&#34;</span>: <span class="s2">&#34;1999&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>,
+</span></span><span class="line"><span class="cl">        <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;description&#34;</span>: <span class="s2">&#34;The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;0c7a74fc-b735-41a3-a383-72b9dad7d608&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;The Godfather&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;year&#34;</span>: <span class="s2">&#34;1972&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>,
+</span></span><span class="line"><span class="cl">        <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;description&#34;</span>: <span class="s2">&#34;A cynical American expatriate struggles to decide whether or not he should help his former lover and her fugitive husband escape French Morocco.&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;15a9e15d-4a5e-4b8a-a7c5-d34b0d5d0879&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;Casablanca&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;year&#34;</span>: <span class="s2">&#34;1942&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>,
+</span></span><span class="line"><span class="cl">        <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;description&#34;</span>: <span class="s2">&#34;A small-time boxer gets a supremely rare chance to fight a heavy-weight champion in a bout in which he strives to go the distance for his self-respect.&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;f6fb4a62-6d84-434e-8e2c-70e4c1e7ab2c&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;Rocky&#34;</span>,
+</span></span><span class="line"><span class="cl">            <span class="s2">&#34;year&#34;</span>: <span class="s2">&#34;1976&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">]</span>
+</span></span></code></pre></div><h3 id="get-a-random-list-of-movies">Get a random list of Movies</h3>
+<p><a href="http://localhost:8080/movies/random">http://localhost:8080/movies/random</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> http :8080/movies/random
+</span></span><span class="line"><span class="cl">HTTP/1.1 <span class="m">200</span> OK
+</span></span><span class="line"><span class="cl">Content-Length: <span class="m">240</span>
+</span></span><span class="line"><span class="cl">Content-Type: application/json
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;description&#34;</span>: <span class="s2">&#34;A cynical American expatriate struggles to decide whether or not he should help his former lover and her fugitive husband escape French Morocco.&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;5dd310b8-8d51-4a1e-a20c-790fec00029f&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;Casablanca&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;year&#34;</span>: <span class="s2">&#34;1942&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="get-a-movie-by-his-name">Get a Movie by his name</h3>
+<p><a href="http://localhost:8080/movies/?name=Rocky">http://localhost:8080/movies/?name=Rocky</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">http :8080/movies <span class="nv">name</span><span class="o">==</span><span class="s2">&#34;Rocky&#34;</span> -v
+</span></span><span class="line"><span class="cl">GET /movies?name<span class="o">=</span>Rocky HTTP/1.1
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">Host: localhost:8080
+</span></span><span class="line"><span class="cl">User-Agent: HTTPie/2.0.0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">HTTP/1.1 <span class="m">200</span> OK
+</span></span><span class="line"><span class="cl">Content-Length: <span class="m">242</span>
+</span></span><span class="line"><span class="cl">Content-Type: application/json
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;description&#34;</span>: <span class="s2">&#34;A small-time boxer gets a supremely rare chance to fight a heavy-weight champion in a bout in which he strives to go the distance for his self-respect.&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;5cae75c6-d18a-495b-a80f-60bdd0763eb1&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;Rocky&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;year&#34;</span>: <span class="s2">&#34;1976&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="get-a-movie-by-his-id">Get a Movie by his ID</h3>
+<p><a href="http://localhost:8080/movies/5dd310b8-8d51-4a1e-a20c-790fec00029f">http://localhost:8080/movies/5dd310b8-8d51-4a1e-a20c-790fec00029f</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">http :8080/movies/5dd310b8-8d51-4a1e-a20c-790fec00029f
+</span></span><span class="line"><span class="cl">HTTP/1.1 <span class="m">200</span> OK
+</span></span><span class="line"><span class="cl">Content-Length: <span class="m">240</span>
+</span></span><span class="line"><span class="cl">Content-Type: application/json
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;description&#34;</span>: <span class="s2">&#34;A cynical American expatriate struggles to decide whether or not he should help his former lover and her fugitive husband escape French Morocco.&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;id&#34;</span>: <span class="s2">&#34;5dd310b8-8d51-4a1e-a20c-790fec00029f&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;name&#34;</span>: <span class="s2">&#34;Casablanca&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;year&#34;</span>: <span class="s2">&#34;1942&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h3 id="search-for-a-not-existing-movie">Search for a not existing Movie</h3>
+<p>Now let&rsquo;s also search for <code>http://localhost:8080/movies/?name=Creed</code> is also a great movie but this one is not yet in our <code>MovieService</code> included
+we will get the following exception.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">http :8080/movies <span class="nv">name</span><span class="o">==</span><span class="s2">&#34;Creed&#34;</span> -v
+</span></span><span class="line"><span class="cl">GET /movies?name<span class="o">=</span>Creed HTTP/1.1
+</span></span><span class="line"><span class="cl">Accept: */*
+</span></span><span class="line"><span class="cl">Accept-Encoding: gzip, deflate
+</span></span><span class="line"><span class="cl">Connection: keep-alive
+</span></span><span class="line"><span class="cl">Host: localhost:8080
+</span></span><span class="line"><span class="cl">User-Agent: HTTPie/2.0.0
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">HTTP/1.1 <span class="m">500</span> Internal Server Error
+</span></span><span class="line"><span class="cl">Content-Length: <span class="m">165</span>
+</span></span><span class="line"><span class="cl">Content-Type: application/json
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;error&#34;</span>: <span class="s2">&#34;Internal Server Error&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;message&#34;</span>: <span class="s2">&#34;Movie was not found.&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;path&#34;</span>: <span class="s2">&#34;/movies&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;requestId&#34;</span>: <span class="s2">&#34;61569a89-3&#34;</span>,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;status&#34;</span>: 500,
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;timestamp&#34;</span>: <span class="s2">&#34;2020-04-19T21:13:10.403+00:00&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></div><h2 id="configure-circuitbreaker">Configure CircuitBreaker</h2>
+<p>😎 Cool stuff 😎 let&rsquo;s implement the <code>CircuitBreaker</code> with <code>Resilinece4j</code>.
+Let&rsquo;s configure the <code>ReactiveCircuitBreaker</code> Bean from <code>ReactiveResilience4JCircuitBreakerFactory</code> with a name <code>movie-service</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="n">bean</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">ReactiveResilience4JCircuitBreakerFactory</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">        <span class="p">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&#34;movie-service&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="to-be-continued-">to be continued ..</h3>
+<p>The example source code can be found here <a href="https://github.com/marzelwidmer/kboot-resilience4j">GitHub</a></p>
+<blockquote>
+<p>💡 <strong>Logger Configuration</strong>:
+logging.pattern.console: &ldquo;%clr(%d{yyyy-MM-dd E HH:mm:ss.SSS}){blue} %clr(%-40.40logger{0}){magenta} - %clr(%m){green}%n&rdquo;</p>
+</blockquote>
+<hr>
+<p><em>References:</em></p>
+<blockquote>
+<p><a href="https://resilience4j.readme.io/docs">Resilience4j docs</a></p>
+</blockquote>
+</article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script type="application/javascript" src='https://marzelwidmer.github.io/js/toc.js'></script>
+<link rel="stylesheet" href='https://marzelwidmer.github.io/css/toc.css' />
+
+
+  <div class="footer container-xl width-full p-responsive">
+  <div
+    class="position-relative d-flex flex-row-reverse flex-lg-row flex-wrap flex-lg-nowrap flex-justify-center flex-lg-justify-between flex-sm-items-center pt-6 pb-2 mt-6 f6 text-gray border-top border-gray-light ">
+    <a aria-label="Homepage" title="GitHub" class="footer-octicon d-none d-lg-block mr-lg-4" href="https://marzelwidmer.github.io/">
+      <svg height="24" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" width="24">
+        <path fill-rule="evenodd"
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+        </path>
+      </svg>
+    </a>
+    <ul class="list-style-none d-flex flex-wrap col-12 flex-justify-center flex-lg-justify-between mb-2 mb-lg-0">
+      
+      <li class="mr-3 mr-lg-0">Theme by <a href='https://github.com/MeiK2333/github-style'>github-style</a></li>
+      
+    </ul>
+  </div>
+  <div class="d-flex flex-justify-center pb-6">
+    <span class="f6 text-gray-light"></span>
+  </div>
+
+
+</div>
+</body>
+
+<script type="application/javascript" src="https://marzelwidmer.github.io/js/github-style.js"></script>
+
+
+
+
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <script type="application/javascript" src='https://marzelwidmer.github.io/js/theme-mode.js'></script>
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/frameworks.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github.min.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/github-style.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/light.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/dark.css' />
+    <link rel="stylesheet" href='https://marzelwidmer.github.io/css/syntax.css' />
+    <title>Spring Boot Kubernetes ConfigMap - Marcel Widmer</title>
+    
+    <link rel="icon" type="image/x-icon" href='https://marzelwidmer.github.io/images/favicon.ico'>
+    
+    <meta name="theme-color" content="#1e2327">
+
+    
+    <meta name="description"
+  content="Now is time to configure our microservices to send the tracing logs to Jaeger 1. The configuration opentracing.jaeger.http-sender.url in configuration application.yaml file looks like below in the sources.
+opentracing: jaeger: log-spans: true http-sender: url: http://localhost:14268/api/traces The opentracing.jaeger.http-sender.url we are looking for we get form the section Get Route Host in the Jaeger post We will use the ConfigMap approach with the Spring Cloud Kubernetes{:target=&amp;quot;_blank&amp;quot;} starters.
+Maven Update Maven Configuration with Spring Cloud Kubernetes{:target=&amp;quot;_blank&amp;quot;} library." />
+<meta name="keywords"
+  content='google analytics' />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="https://marzelwidmer.github.io/post/blog/2019/2019-09-18-spring-boot-k8s-configmap/" />
+
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="Spring Boot Kubernetes ConfigMap - Marcel Widmer" />
+<meta name="twitter:description"
+  content="Now is time to configure our microservices to send the tracing logs to Jaeger 1. The configuration opentracing.jaeger.http-sender.url in configuration application.yaml file looks like below in the sources.
+opentracing: jaeger: log-spans: true http-sender: url: http://localhost:14268/api/traces The opentracing.jaeger.http-sender.url we are looking for we get form the section Get Route Host in the Jaeger post We will use the ConfigMap approach with the Spring Cloud Kubernetes{:target=&amp;quot;_blank&amp;quot;} starters.
+Maven Update Maven Configuration with Spring Cloud Kubernetes{:target=&amp;quot;_blank&amp;quot;} library." />
+<meta name="twitter:site" content="https://marzelwidmer.github.io/" />
+<meta name="twitter:creator" content="" />
+<meta name="twitter:image"
+  content="https://marzelwidmer.github.io/">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Spring Boot Kubernetes ConfigMap - Marcel Widmer">
+<meta property="og:description"
+  content="Now is time to configure our microservices to send the tracing logs to Jaeger 1. The configuration opentracing.jaeger.http-sender.url in configuration application.yaml file looks like below in the sources.
+opentracing: jaeger: log-spans: true http-sender: url: http://localhost:14268/api/traces The opentracing.jaeger.http-sender.url we are looking for we get form the section Get Route Host in the Jaeger post We will use the ConfigMap approach with the Spring Cloud Kubernetes{:target=&amp;quot;_blank&amp;quot;} starters.
+Maven Update Maven Configuration with Spring Cloud Kubernetes{:target=&amp;quot;_blank&amp;quot;} library." />
+<meta property="og:url" content="https://marzelwidmer.github.io/post/blog/2019/2019-09-18-spring-boot-k8s-configmap/" />
+<meta property="og:site_name" content="Spring Boot Kubernetes ConfigMap" />
+<meta property="og:image"
+  content="https://marzelwidmer.github.io/">
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+<meta property="article:published_time" content="2019-09-18 00:00:00 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body>
+  <div style="position: relative">
+  <header class="Header js-details-container Details px-3 px-md-4 px-lg-5 flex-wrap flex-md-nowrap open Details--on">
+    <div class="Header-item mobile-none" style="margin-top: -4px; margin-bottom: -4px;">
+      <a class="Header-link" href="https://marzelwidmer.github.io/">
+        <img class="octicon" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item d-md-none">
+      <button class="Header-link btn-link js-details-target" type="button"
+        onclick="document.querySelector('#header-search').style.display = document.querySelector('#header-search').style.display == 'none'? 'block': 'none'">
+        <img height="24" class="octicon octicon-three-bars" width="24" src="/images/GitHub-Mark-Light-32px.png">
+      </button>
+    </div>
+    <div style="display: none;" id="header-search"
+      class="Header-item Header-item--full flex-column flex-md-row width-full flex-order-2 flex-md-order-none mr-0 mr-md-3 mt-3 mt-md-0 Details-content--hidden-not-important d-md-flex">
+      <div
+        class="Header-search header-search flex-auto js-site-search position-relative flex-self-stretch flex-md-self-auto mb-3 mb-md-0 mr-0 mr-md-3 scoped-search site-scoped-search js-jump-to">
+        <div class="position-relative">
+          <form target="_blank" action="https://www.google.com/search" accept-charset="UTF-8" method="get"
+            autocomplete="off">
+            <label
+              class="Header-search-label form-control input-sm header-search-wrapper p-0 js-chromeless-input-container header-search-wrapper-jump-to position-relative d-flex flex-justify-between flex-items-center">
+              <input type="text"
+                class="Header-search-input form-control input-sm header-search-input jump-to-field js-jump-to-field js-site-search-focus js-site-search-field is-clearable"
+                name="q" value="" placeholder="Search" autocomplete="off">
+              <input type="hidden" name="q" value="site:https://marzelwidmer.github.io/">
+            </label>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="Header-item Header-item--full flex-justify-center d-md-none position-relative">
+      <a class="Header-link " href="https://marzelwidmer.github.io/">
+        <img class="octicon octicon-mark-github v-align-middle" height="32" width="32" src="/images/GitHub-Mark-Light-32px.png">
+      </a>
+    </div>
+    <div class="Header-item" style="margin-right: 0;">
+      <a href="javascript:void(0)" class="Header-link no-select" onclick="switchTheme()">
+        <svg style="fill: var(--color-profile-color-modes-toggle-moon);" class="no-select" viewBox="0 0 16 16"
+          version="1.1" width="16" height="16">
+          <path fill-rule="evenodd" clip-rule="evenodd"
+            d="M4.52208 7.71754C7.5782 7.71754 10.0557 5.24006 10.0557 2.18394C10.0557 1.93498 10.0392 1.68986 10.0074 1.44961C9.95801 1.07727 10.3495 0.771159 10.6474 0.99992C12.1153 2.12716 13.0615 3.89999 13.0615 5.89383C13.0615 9.29958 10.3006 12.0605 6.89485 12.0605C3.95334 12.0605 1.49286 10.001 0.876728 7.24527C0.794841 6.87902 1.23668 6.65289 1.55321 6.85451C2.41106 7.40095 3.4296 7.71754 4.52208 7.71754Z">
+          </path>
+        </svg>
+      </a>
+    </div>
+  </header>
+</div>
+
+  
+<div>
+  <main>
+    <div class="gisthead pagehead bg-gray-light pb-0 pt-3 mb-4">
+      <div class="px-0">
+        <div class="mb-3 d-flex px-3 px-md-3 px-lg-5">
+          <div class="flex-auto min-width-0 width-fit mr-3">
+            <div class="d-flex">
+              <div class="d-none d-md-block">
+                <a class="avatar mr-2 flex-shrink-0" href="https://marzelwidmer.github.io/">
+                  <img class=" avatar-user"
+                    src="/images/avatar.png"
+                    width="32" height="32"></a>
+              </div>
+              <div class="d-flex flex-column">
+                <h1 class="break-word f3 text-normal mb-md-0 mb-1">
+                  <span class="author">
+                    <a href="https://marzelwidmer.github.io/">Marcel Widmer</a></span><span
+                    class="path-divider">/</span><strong class="css-truncate-target mr-1" style="max-width: 410px"><a
+                      href="https://marzelwidmer.github.io/post/blog/2019/2019-09-18-spring-boot-k8s-configmap/">Spring Boot Kubernetes ConfigMap</a></strong>
+                </h1>
+                <div class="note m-0">
+                  Created <relative-time datetime="Wed, 18 Sep 2019 00:00:00 &#43;0000"
+                    class="no-wrap">
+                    Wed, 18 Sep 2019 00:00:00 &#43;0000</relative-time>
+
+                  
+                  <span class="file-info-divider"></span>
+                  Modified <relative-time datetime="Fri, 16 Feb 2024 08:20:05 &#43;0100"
+                    class="no-wrap">
+                    Fri, 16 Feb 2024 08:20:05 &#43;0100</relative-time>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-lg px-3 new-discussion-timeline">
+      <div class="repository-content gist-content">
+        <div>
+          <div class="js-gist-file-update-container js-task-list-container file-box">
+            <div id="file-pytest" class="file my-2">
+              <div id="post-header" class="file-header d-flex flex-md-items-center flex-items-start sticky-header" style="z-index: 2">
+                <div class="file-info d-flex flex-md-items-center flex-items-start flex-order-1 flex-auto">
+                  <div class="text-mono f6 flex-auto pr-3 flex-order-2 flex-md-order-1 mt-2 mt-md-0">
+                    
+                    <summary id="toc-toggle" onclick="clickToc()" class="btn btn-octicon m-0 mr-2 p-2">
+                      <svg aria-hidden="true" viewBox="0 0 16 16" height="16" width="16" class="octicon octicon-list-unordered">
+                        <path fill-rule="evenodd" d="M2 4a1 1 0 100-2 1 1 0 000 2zm3.75-1.5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zm0 5a.75.75 0 000 1.5h8.5a.75.75 0 000-1.5h-8.5zM3 8a1 1 0 11-2 0 1 1 0 012 0zm-1 6a1 1 0 100-2 1 1 0 000 2z"></path>
+                      </svg>
+                    </summary>
+                    <details-menu class="SelectMenu" id="toc-details" style="display: none;">
+                      <div class="SelectMenu-modal rounded-3 mt-1" style="max-height: 340px;">
+                        <div class="SelectMenu-list SelectMenu-list--borderless p-2" style="overscroll-behavior: contain;" id="toc-list">
+                        </div>
+                      </div>
+                    </details-menu>
+                      509 Words
+                    
+
+                  </div>
+                  <div class="file-actions flex-order-2 pt-0">
+                    
+                    
+                    <a class="muted-link mr-3" href="/tags/k8s">
+                      <svg class="octicon octicon-tag" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                        <path fill-rule="evenodd"
+                          d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z">
+                        </path>
+                      </svg>
+                      k8s
+                    </a>
+                    
+                    <a class="muted-link mr-3" href="/tags/configmap">
+                      <svg class="octicon octicon-tag" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                        <path fill-rule="evenodd"
+                          d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z">
+                        </path>
+                      </svg>
+                      ConfigMap
+                    </a>
+                    
+                    <a class="muted-link mr-3" href="/tags/spring-boot">
+                      <svg class="octicon octicon-tag" viewBox="0 0 16 16" version="1.1" width="16" height="16">
+                        <path fill-rule="evenodd"
+                          d="M2.5 7.775V2.75a.25.25 0 01.25-.25h5.025a.25.25 0 01.177.073l6.25 6.25a.25.25 0 010 .354l-5.025 5.025a.25.25 0 01-.354 0l-6.25-6.25a.25.25 0 01-.073-.177zm-1.5 0V2.75C1 1.784 1.784 1 2.75 1h5.025c.464 0 .91.184 1.238.513l6.25 6.25a1.75 1.75 0 010 2.474l-5.026 5.026a1.75 1.75 0 01-2.474 0l-6.25-6.25A1.75 1.75 0 011 7.775zM6 5a1 1 0 100 2 1 1 0 000-2z">
+                        </path>
+                      </svg>
+                      Spring Boot
+                    </a>
+                    
+                    
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="Box-body px-5 pb-5" style="z-index: 1">
+                <article class="markdown-body entry-content container-lg"><p>Now is time to configure our <a href="https://github.com/marzelwidmer/microservices-demo">microservices</a> to send the tracing
+logs to Jaeger <sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>.
+The configuration <code>opentracing.jaeger.http-sender.url</code> in configuration <code>application.yaml</code> file looks like below in the sources.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">opentracing</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">jaeger</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">log-spans</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">http-sender</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">http://localhost:14268/api/traces</span><span class="w">
+</span></span></span></code></pre></div><p>The <code>opentracing.jaeger.http-sender.url</code> we are looking for we get form the section <a href="http://blog.marcelwidmer.org/jaeger/#GetRouteHost">Get Route Host in the Jaeger post</a>
+We will use the <code>ConfigMap</code> approach with the <a href="https://spring.io/projects/spring-cloud-kubernetes">Spring Cloud Kubernetes</a>{:target=&quot;_blank&quot;} starters.</p>
+<h2 id="maven-a-namemavenconfigurationa">Maven <!-- raw HTML omitted --><!-- raw HTML omitted --></h2>
+<p>Update Maven Configuration with <a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/1.0.3.RELEASE/single/spring-cloud-kubernetes.html">Spring Cloud Kubernetes</a>{:target=&quot;_blank&quot;} library.</p>
+<h3 id="dependency-management-spring-cloud-dependencies">Dependency Management <code>spring-cloud-dependencies</code></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependencyManagement&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;dependencies&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;artifactId&gt;</span>spring-cloud-dependencies<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;version&gt;</span>${spring-cloud.version}<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/dependencies&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependencyManagement&gt;</span>
+</span></span></code></pre></div><h3 id="spring-cloud-version-spring-cloudversion">Spring Cloud Version <code>spring-cloud.version</code></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;properties&gt;</span>
+</span></span><span class="line"><span class="cl">    ...
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;spring-cloud.version&gt;</span>Greenwich.SR3<span class="nt">&lt;/spring-cloud.version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/properties&gt;</span>
+</span></span></code></pre></div><h3 id="dependency-spring-cloud-starter-kubernetes-config">Dependency <code>spring-cloud-starter-kubernetes-config</code></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="c">&lt;!-- Kubernetes --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;groupId&gt;</span>org.springframework.cloud<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;artifactId&gt;</span>spring-cloud-starter-kubernetes-config<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><h2 id="application-configuration">Application Configuration</h2>
+<p>The application may need to detect changes on external property sources and update their internal status to reflect the new configuration.
+The reload feature of <code>Spring Cloud Kubernetes</code> is able to trigger an application reload when a related <code>ConfigMap</code> changes.</p>
+<p>This feature is disabled by default and can be enabled using the configuration property <code>spring.cloud.kubernetes.reload.enabled=true</code>
+in the <code>application.yaml</code> file.</p>
+<p>The configuration <code>spring.cloud.kubernetes.reload.strategy=restart_context</code> will restart the whole Spring ApplicationContext gracefully.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spring</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">cloud</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">kubernetes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">reload</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">strategy</span><span class="p">:</span><span class="w"> </span><span class="l">restart_context</span><span class="w">
+</span></span></span></code></pre></div><p>Configure the <code>management.endpoint.restart.enabled=true</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">management:
+</span></span><span class="line"><span class="cl">  endpoint:
+</span></span><span class="line"><span class="cl">    restart:
+</span></span><span class="line"><span class="cl">      enabled: <span class="nb">true</span>
+</span></span></code></pre></div><h2 id="configured-service-account---rbac-policy">Configured Service Account - RBAC policy</h2>
+<p>To read the <code>ConfigMap</code> we have to give to the <a href="https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/1.1.0.M2/reference/html/#_service_account">Service Account</a>{:target=&quot;_blank&quot;}  in the default namespace access right. This can be done to give just
+<code>view</code> access <code>oc policy add-role-to-user view system:serviceaccount:development:default</code></p>
+<p>The better solution is <a href="#ConfigureClusterRole">configure ClusterRole</a></p>
+<blockquote>
+<p>⚠️ <strong>Avoid no RBAC policy match exception</strong>:<br>
+.fabric8.kubernetes.client.KubernetesClientException:
+Failure executing: GET at: https://172.30.0.1/api/v1/namespaces/development/pods/order-service-35-wj25f.
+Message: Forbidden!Configured service account doesnt have access.
+Service account may have been revoked. pods &ldquo;order-service-35-wj25f&rdquo; is
+forbidden: User &ldquo;system:serviceaccount:development:default&rdquo; cannot get pods in the namespace &ldquo;development&rdquo;: no RBAC policy matched.</p>
+</blockquote>
+<h1 id="create-clusterrole">Create ClusterRole</h1>
+<p>Additional you can also create a <code>ClusterRole</code> for Spring components let it named <code>spring-roles</code>.
+Create a file <code>service-account-for-spring-cloud-k8s-access.yaml</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterRole</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">spring-roles</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">rules</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">apiGroups</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;&#34;</span><span class="p">]</span><span class="w"> </span><span class="c"># &#34;&#34; indicates the core API group</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">resources</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;pods&#34;</span><span class="p">,</span><span class="s2">&#34;configmaps&#34;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">verbs</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;get&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;list&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;watch&#34;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nn">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io/v1beta1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterRoleBinding</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">allow-spring-to-access-cluster</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">subjects</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ServiceAccount</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">roleRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ClusterRole</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">spring-roles</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">apiGroup</span><span class="p">:</span><span class="w"> </span><span class="l">rbac.authorization.k8s.io</span><span class="w">
+</span></span></span></code></pre></div><p>Login in with privileged user <code>oc login -u &lt;privileged user&gt;</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc apply -f service-account-for-spring-cloud-k8s-access.yaml
+</span></span></code></pre></div><p>Now when you check che Cluster Console under <em>Administration/Roles</em> and you search for <code>spring</code> you will find the role.</p>
+<p><img src="/static/springboot-configmap/cluster-console-search-spring-roles.png" alt="cluster-console-search-spring-roles.png">
+<img src="/static/springboot-configmap/cluster-console-spring-roles.png" alt="cluster-console-spring-roles.png"></p>
+<h2 id="deploy-configmap">Deploy ConfigMap</h2>
+<p>Now is time to create our <code>ConfigMap</code> and <code>apply</code> it in the <code>development</code> namespace for the <code>oder-service</code>
+You can do it directly in a shell.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ <span class="nb">echo</span> <span class="s2">&#34;apiVersion: v1
+</span></span></span><span class="line"><span class="cl"><span class="s2">kind: ConfigMap
+</span></span></span><span class="line"><span class="cl"><span class="s2">metadata:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    #  matches the spring app name as defined in application.yml
+</span></span></span><span class="line"><span class="cl"><span class="s2">    name: order-service
+</span></span></span><span class="line"><span class="cl"><span class="s2">data:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    #  must be named &#39;application.yaml&#39; or be the only key in this config
+</span></span></span><span class="line"><span class="cl"><span class="s2">    #  refer to Spring Cloud Kubernetes Config documentation or source code
+</span></span></span><span class="line"><span class="cl"><span class="s2">    application.yaml: |
+</span></span></span><span class="line"><span class="cl"><span class="s2">        opentracing:
+</span></span></span><span class="line"><span class="cl"><span class="s2">            jaeger:
+</span></span></span><span class="line"><span class="cl"><span class="s2">                http-sender:
+</span></span></span><span class="line"><span class="cl"><span class="s2">                    url: http://jaeger-collector-jaeger.apps.c3smonkey.ch/api/traces&#34;</span> <span class="p">|</span> oc apply -f -
+</span></span></code></pre></div><p>Better is you create a <code>ConfigMap</code> file and then you use the <code>apply</code> command.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ oc apply -f deployments/configmap.yaml
+</span></span></code></pre></div><p>When you hit the service again you will see some traces in the Jaeger now.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">$ <span class="k">for</span> x in <span class="o">(</span>seq 50<span class="o">)</span><span class="p">;</span> http <span class="s2">&#34;http://order-service-development.apps.c3smonkey.ch/api/v1/orders/random&#34;</span><span class="p">;</span> end
+</span></span></code></pre></div><div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://www.jaegertracing.io/">jaegertracing.io</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+</article>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+<script type="application/javascript" src='https://marzelwidmer.github.io/js/toc.js'></script>
+<link rel="stylesheet" href='https://marzelwidmer.github.io/css/toc.css' />
+
+
+  <div class="footer container-xl width-full p-responsive">
+  <div
+    class="position-relative d-flex flex-row-reverse flex-lg-row flex-wrap flex-lg-nowrap flex-justify-center flex-lg-justify-between flex-sm-items-center pt-6 pb-2 mt-6 f6 text-gray border-top border-gray-light ">
+    <a aria-label="Homepage" title="GitHub" class="footer-octicon d-none d-lg-block mr-lg-4" href="https://marzelwidmer.github.io/">
+      <svg height="24" class="octicon octicon-mark-github" viewBox="0 0 16 16" version="1.1" width="24">
+        <path fill-rule="evenodd"
+          d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+        </path>
+      </svg>
+    </a>
+    <ul class="list-style-none d-flex flex-wrap col-12 flex-justify-center flex-lg-justify-between mb-2 mb-lg-0">
+      
+      <li class="mr-3 mr-lg-0">Theme by <a href='https://github.com/MeiK2333/github-style'>github-style</a></li>
+      
+    </ul>
+  </div>
+  <div class="d-flex flex-justify-center pb-6">
+    <span class="f6 text-gray-light"></span>
+  </div>
+
+
+</div>
+</body>
+
+<script type="application/javascript" src="https://marzelwidmer.github.io/js/github-style.js"></script>
+
+
+
+
+</html>
