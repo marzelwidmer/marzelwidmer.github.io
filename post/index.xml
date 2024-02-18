@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Marcel Widmer</title>
-    <link>https://marzelwidmer.github.io/</link>
-    <description>Recent content on Marcel Widmer</description>
+    <title>Posts on Marcel Widmer</title>
+    <link>https://marzelwidmer.github.io/post/</link>
+    <description>Recent content in Posts on Marcel Widmer</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Sun, 18 Feb 2024 13:02:48 +0100</lastBuildDate>
-    <atom:link href="https://marzelwidmer.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://marzelwidmer.github.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Curriculum Vitae</title>
       <link>https://marzelwidmer.github.io/post/curriculum-vitae/curriculum-vitae/</link>
