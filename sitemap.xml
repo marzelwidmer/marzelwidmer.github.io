@@ -77,6 +77,9 @@
     <loc>https://marzelwidmer.github.io/post/blog/2019/2019-10-22-axon/</loc>
     <lastmod>2024-02-16T08:20:05+01:00</lastmod>
   </url><url>
+    <loc>https://marzelwidmer.github.io/tags/ci/cd/</loc>
+    <lastmod>2024-02-16T08:20:05+01:00</lastmod>
+  </url><url>
     <loc>https://marzelwidmer.github.io/tags/configmap/</loc>
     <lastmod>2024-02-16T08:20:05+01:00</lastmod>
   </url><url>
@@ -112,7 +115,5 @@
   </url><url>
     <loc>https://marzelwidmer.github.io/tags/lets-encrypt/</loc>
     <lastmod>2024-02-16T08:20:05+01:00</lastmod>
-  </url><url>
-    <loc>https://marzelwidmer.github.io/tags/ci/cd/</loc>
   </url>
 </urlset>

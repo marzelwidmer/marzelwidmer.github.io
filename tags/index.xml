@@ -9,28 +9,28 @@
     <lastBuildDate>Sun, 18 Feb 2024 17:11:47 +0100</lastBuildDate>
     <atom:link href="https://marzelwidmer.github.io/tags/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>argocd</title>
+      <title>Argocd</title>
       <link>https://marzelwidmer.github.io/tags/argocd/</link>
       <pubDate>Sun, 25 Oct 2020 00:00:00 +0000</pubDate>
       <guid>https://marzelwidmer.github.io/tags/argocd/</guid>
       <description></description>
     </item>
     <item>
-      <title>gitops</title>
+      <title>Gitops</title>
       <link>https://marzelwidmer.github.io/tags/gitops/</link>
       <pubDate>Sun, 25 Oct 2020 00:00:00 +0000</pubDate>
       <guid>https://marzelwidmer.github.io/tags/gitops/</guid>
       <description></description>
     </item>
     <item>
-      <title>harbor</title>
+      <title>Harbor</title>
       <link>https://marzelwidmer.github.io/tags/harbor/</link>
       <pubDate>Sun, 25 Oct 2020 00:00:00 +0000</pubDate>
       <guid>https://marzelwidmer.github.io/tags/harbor/</guid>
       <description></description>
     </item>
     <item>
-      <title>k8s</title>
+      <title>K8s</title>
       <link>https://marzelwidmer.github.io/tags/k8s/</link>
       <pubDate>Sun, 25 Oct 2020 00:00:00 +0000</pubDate>
       <guid>https://marzelwidmer.github.io/tags/k8s/</guid>
@@ -65,6 +65,13 @@
       <description></description>
     </item>
     <item>
+      <title>CI/CD</title>
+      <link>https://marzelwidmer.github.io/tags/ci/cd/</link>
+      <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
+      <guid>https://marzelwidmer.github.io/tags/ci/cd/</guid>
+      <description></description>
+    </item>
+    <item>
       <title>ConfigMap</title>
       <link>https://marzelwidmer.github.io/tags/configmap/</link>
       <pubDate>Wed, 18 Sep 2019 00:00:00 +0000</pubDate>
@@ -79,7 +86,7 @@
       <description></description>
     </item>
     <item>
-      <title>logging</title>
+      <title>Logging</title>
       <link>https://marzelwidmer.github.io/tags/logging/</link>
       <pubDate>Sun, 01 Sep 2019 00:00:00 +0000</pubDate>
       <guid>https://marzelwidmer.github.io/tags/logging/</guid>
@@ -97,13 +104,6 @@
       <link>https://marzelwidmer.github.io/tags/lets-encrypt/</link>
       <pubDate>Sun, 13 Jan 2019 00:00:00 +0000</pubDate>
       <guid>https://marzelwidmer.github.io/tags/lets-encrypt/</guid>
-      <description></description>
-    </item>
-    <item>
-      <title>CI/CD</title>
-      <link>https://marzelwidmer.github.io/tags/ci/cd/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>https://marzelwidmer.github.io/tags/ci/cd/</guid>
       <description></description>
     </item>
   </channel>
